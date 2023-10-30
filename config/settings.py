@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'users',
+
 ]
 
 MIDDLEWARE = [
@@ -87,6 +90,12 @@ DATABASES = {
         # 'PASSWORD': os.getenv('DATABASES_PASSWORD')
     }
 }
+
+# Переопределение модели аутентификации
+AUTH_USER_MODEL = 'users.User'
+
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
