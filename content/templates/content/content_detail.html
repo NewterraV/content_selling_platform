@@ -1,0 +1,122 @@
+{% extends 'content/base.html' %}
+{% load templatetags %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <div class="ratio ratio-16x9">
+                    <iframe
+                            src="https://www.youtube.com/embed/{{ object.video.video_id }}"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="row pt-3">
+                    <div class="col-10">
+                        <h4 class="gap-3 pt-2">
+                            {{ object.title }}
+                        </h4>
+                    </div>
+                    <div class="col-2">
+                        <div class="d-grid gap-2 pt-2">
+                            <button class="btn btn-outline-primary"
+                                    type="button">
+                                Like
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-auto bg-body-secondary position-relative">
+                        <img src="https://github.com/mdo.png" alt="mdo"
+                             width="40"
+                             height="40" class="rounded-circle">
+                        <a href="#" class="stretched-link"></a>
+                    </div>
+                    <div class="col-3">
+                        <div class="row g-0 bg-body-secondary position-relative">
+                            <div class="fs-6 fw-semibold">Автор</div>
+                            <small class="fw-lighter">Количество
+                                подписчиков
+                            </small>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                    <div class="col-auto d-md-block">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-success"
+                                    type="button">
+                                Подписаться
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="text fw-light pt-3" style="width: 715px;">
+                    {{ object.description }}
+                </div>
+                <form>
+                    <div class="row pt-5">
+                        <div class="mb-3 col-10">
+                            <input type="text" id="disabledTextInput"
+                                   class="form-control"
+                                   placeholder="Оставьте комментарий...">
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-success"
+                                        type="submit">
+                                    Отправить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <div class="row pt-3">
+                        <div class="col-auto">
+                            <img src="https://github.com/mdo.png" alt="mdo"
+                                 width="32"
+                                 height="32" class="rounded-circle">
+                        </div>
+                        <div class="col-auto g-0 bg-body-secondary position-relative">
+                            <span class="fw-normal align-bottom">Автор</span>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                        <div class="col-auto">
+                            <span class="fw-lighter align-bottom">Время</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-11">
+                            <p class="fw-light">Комментарий</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                {% for item in play_list %}
+                    <div class="mb-3" href=""
+                         style="width: 24rem;">
+                        <div class="row g-3 bg-body-secondary position-relative">
+                            <div class="col-md-5">
+                                <img src="{% mediapath item.image %}"
+                                     style="width: 10rem;"
+                                     class="rounded rounded-start"
+                                     alt="...">
+                            </div>
+                            <div class="col-md-7 p-2">
+                                <h6 class="">{{ item.title|truncatechars:45 }}</h6>
+                                <p class="fw-light">{{ item.description|truncatechars:40 }}</p>
+                                <a href="#" class="stretched-link"></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

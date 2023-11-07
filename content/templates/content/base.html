@@ -1,0 +1,123 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+{#    <link href="{% static 'css/transitions.scss' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/variables.scss' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/bootstrap-grid.min.css' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/bootstrap-grid.rtl.min.css' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/bootstrap-reboot.min.css' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/bootstrap-reboot.rtl.min.css' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/bootstrap-utilities.min.css' %}" rel="stylesheet">#}
+{#    <link href="{% static 'css/bootstrap-utilities.rtl.min.css' %}" rel="stylesheet">#}
+
+    <meta name="theme-color" content="#7952b3">
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+</head>
+<body>
+
+<header class="p-3 mb-3 border-bottom">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
+            <a href="/"
+               class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <span class="fs-4">NEWTERRA</span>
+            </a>
+
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="#"
+                       class="nav-link px-2 link-secondary">Подписки</a></li>
+                <li><a href="#" class="nav-link px-2 link-body-emphasis">Авторы</a>
+                </li>
+                <li><a href="#" class="nav-link px-2 link-body-emphasis">Контент</a>
+                </li>
+            </ul>
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+                  role="search">
+                <input type="search" class="form-control"
+                       placeholder="Поиск..." aria-label="Search">
+            </form>
+
+            <div class="dropdown text-end">
+                <a href="#"
+                   class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="mdo" width="32"
+                         height="32" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small">
+                    <li><a class="dropdown-item" href="#">Мои подписки</a>
+                    </li>
+                    <li><a class="dropdown-item" href="#">Мой профиль</a></li>
+                    <li><a class="dropdown-item" href="#">Мой контент</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="col-md-9 ms-sm-auto col-lg-12 px-md-4 pt-4">
+    {% block content %}
+    {% endblock %}
+</main>
+<div class="container">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+        </ul>
+        <p class="text-center text-body-secondary">&copy; 2023 Newterra,
+            Inc</p>
+    </footer>
+</div>
+</body>
+
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+<script src="{% static 'js/feather.min.js' %}"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+<script src="{% static 'js/Chart.min.js' %}"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{#<script src="{% static 'js/bootstrap.esm.js' %}"></script>#}
+{#<script src="{% static 'js/bootstrap.esm.js' %}"></script>#}
+{#<script src="{% static 'js/bootstrap.js' %}"></script>#}
+</html>
