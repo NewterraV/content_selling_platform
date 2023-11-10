@@ -1,0 +1,31 @@
+{% extends 'content/base.html' %}
+{% load templatetags %}
+{% load crispy_forms_tags %}
+{% crispy content_form content.helper %}
+
+{% block content %}
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-6">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                </div>
+                <div class="col-6">
+                    {{ formset.management_form }}
+                    {% for form in formset.forms %}
+                        {{ form | crispy }}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Создать
+                    </button>
+                    <button class="btn btn-outline-dark" type="reset">Отмена
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

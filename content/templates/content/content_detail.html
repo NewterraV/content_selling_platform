@@ -98,18 +98,18 @@
             </div>
             <div class="col-4">
                 {% for item in play_list %}
-                    <div class="mb-3" href=""
+                    <div class="mb-1" href=""
                          style="width: 24rem;">
                         <div class="row g-3 bg-body-secondary position-relative">
                             <div class="col-md-5">
                                 <img src="{% mediapath item.image %}"
                                      style="width: 10rem;"
-                                     class="rounded rounded-start"
+                                     class="rounded-start"
                                      alt="...">
                             </div>
                             <div class="col-md-7 p-2">
                                 <h6 class="">{{ item.title|truncatechars:45 }}</h6>
-                                <p class="fw-light">{{ item.description|truncatechars:40 }}</p>
+                                <p class="fw-light lh-1">{{ item.description|truncatechars:40 }}</p>
                                 <a href="#" class="stretched-link"></a>
                             </div>
                         </div>
@@ -119,4 +119,3 @@
         </div>
     </div>
 {% endblock %}
-

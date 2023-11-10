@@ -1,0 +1,42 @@
+{% extends 'content/base.html' %}
+{% load templatetags %}
+
+{% block content %}
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-4 g-3">
+            {% for content in object_list %}
+                <div class="col">
+                    <div class="card h-100 g-3 bg-body-secondary position-relative">
+                        <img src="{% mediapath content.image %}"
+                             class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h6 class="card-title pt-0">{{ content.title|truncatechars:35 }}</h6>
+                            <a href="{% url 'content:content_detail' content.pk %}" class="stretched-link"></a>
+                            <p class="fw-light lh-1 pt-0">{{ content.description|truncatechars:40 }}</p>
+
+                            <small class="fw-light pt-0">{{ content.view_count }}
+                                просмотров</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center pt-3">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
