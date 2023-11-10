@@ -1,5 +1,5 @@
 from django.forms import inlineformset_factory
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     ListView,
     DetailView,
@@ -81,6 +81,28 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
             self.object = form.save()
             # self.object.owner = self.request.user
             # self.object.save()
+            formset.instance = self.object
+            formset.save()
+        return super().form_valid(form)
+
+
+class ContentUpdateView(ContentFormsetMixin, UpdateView):
+
+    model = Content
+    form_class = ContentForm
+
+    success_url = reverse_lazy('content:content_list')
+
+    def get_success_url(self):
+        return reverse(
+            'content:content_detail',
+            args=[self.kwargs.get('pk')]
+        )
+
+    def form_valid(self, form):
+        formset = self.get_context_data()['formset']
+
+        if formset.is_valid():
             formset.instance = self.object
             formset.save()
         return super().form_valid(form)

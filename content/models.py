@@ -25,6 +25,7 @@ class Content(models.Model):
         verbose_name='дата последнего обновления'
     )
     start_publish = models.DateTimeField(
+        default=None,
         verbose_name='Дата и время публикации',
         **NULLABLE
     )
