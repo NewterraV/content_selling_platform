@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 NULLABLE = {
     'null': True,
     'blank': True
@@ -11,13 +13,20 @@ class Content(models.Model):
     Модель описывающая запись пользователя
     """
 
-    title = models.CharField(max_length=150, verbose_name='заголовок')
+    title = models.CharField(max_length=100, verbose_name='заголовок')
     description = models.TextField(verbose_name='описание')
-    image = models.ImageField(upload_to='content/content/',
-                              verbose_name='изображение', **NULLABLE)
+    image = models.ImageField(
+        upload_to='content/content/',
+        verbose_name='изображение',
+        **NULLABLE
+    )
     date_update = models.DateTimeField(
         auto_now=True,
         verbose_name='дата последнего обновления'
+    )
+    start_publish = models.DateTimeField(
+        verbose_name='Дата и время публикации',
+        **NULLABLE
     )
     is_publish = models.BooleanField(
         default=False,
@@ -29,7 +38,15 @@ class Content(models.Model):
     )
     view_count = models.PositiveIntegerField(
         default=0,
-        verbose_name='Количество просмотров')
+        verbose_name='Количество просмотров'
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='Content',
+        **NULLABLE
+    )
 
 
 class Video(models.Model):
