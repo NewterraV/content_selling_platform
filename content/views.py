@@ -1,13 +1,14 @@
 from django.forms import inlineformset_factory
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
+from random import sample
 from django.views.generic import (
     ListView,
     DetailView,
     DeleteView,
     CreateView,
     UpdateView,
-    View
+    TemplateView
 )
 
 from content.forms import VideoForm, ContentForm
@@ -40,13 +41,27 @@ class ContentFormsetMixin:
         return context_data
 
 
-def index(request):
-    """Метод представления главной страницы"""
-    context = {
-        'title': 'Домашняя страница'
-    }
+class IndexView(ListView):
+    """Вывод главной страницы"""
 
-    return render(request, 'content/index.html', context)
+    model = Content
+    template_name = 'content/index.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(is_publish=True)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        subs_paid = list(self.model.objects.filter(is_publish=True).order_by(
+            '-date_update'))
+        purchased = list(self.model.objects.filter(is_publish=True).order_by(
+            'date_update'))
+        context_data['subs_paid'] = subs_paid[:8]
+        context_data['purchased'] = sample(purchased, 4) if len(
+            purchased) > 4 else purchased
+
+        return context_data
 
 
 class ContentDetailView(DetailView):
@@ -72,15 +87,19 @@ class ContentDetailView(DetailView):
         return context
 
 
-class ContentListView(ListView):
+class ContentListView(LoginRequiredMixin, ListView):
     """Контроллер для отображения списка контента"""
 
     model = Content
-    extra_context = {'title': 'Видео'}
+    extra_context = {'title': 'Мой контент'}
+    login_url = 'users:login'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(owner=self.request.user)
+        return queryset
 
 
 class ContentCreateView(ContentFormsetMixin, CreateView):
-
     model = Content
     form_class = ContentForm
 
@@ -104,7 +123,6 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
 
 
 class ContentUpdateView(ContentFormsetMixin, UpdateView):
-
     model = Content
     form_class = ContentForm
 

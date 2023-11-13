@@ -1,7 +1,7 @@
 from django.urls import path
 from content.apps import ContentConfig
 from content.views import ContentDetailView, ContentListView, \
-    ContentCreateView, ContentUpdateView, index
+    ContentCreateView, ContentUpdateView, IndexView
 
 app_name = ContentConfig.name
 
@@ -15,5 +15,5 @@ urlpatterns = [
          name='content_create'),
     path('content/<int:pk>/update/', ContentUpdateView.as_view(),
          name='content_update'),
-    path('', index, name='index')
+    path('', IndexView.as_view(), name='index')
 ]
