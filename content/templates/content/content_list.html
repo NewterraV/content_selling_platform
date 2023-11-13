@@ -7,8 +7,10 @@
             {% for content in object_list %}
                 <div class="col">
                     <div class="card h-100 g-3 bg-body border-white">
-                        <img src="{% mediapath content.image %}"
-                             class="card-img-top" alt="...">
+                        <div class="ratio ratio-16x9">
+                            <img src="{% mediapath content.image %}"
+                             class="rounded" alt="...">
+                        </div>
                         <div class="row justify-content-start">
                             <div class="col-2 pt-2">
                                 <img src="{% mediapath content.owner.avatar %}"

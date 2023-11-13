@@ -10,7 +10,9 @@
                             src="https://www.youtube.com/embed/{{ object.video.video_id }}"
                             title="YouTube video player" frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen>
+                            allowfullscreen
+                            class="rounded-4">
+
                     </iframe>
                 </div>
                 <div class="row pt-3">
@@ -30,7 +32,8 @@
                 </div>
                 <div class="row pt-2">
                     <div class="col-auto bg-body position-relative">
-                        <img src="{% mediapath object.owner.avatar %}" alt="..."
+                        <img src="{% mediapath object.owner.avatar %}"
+                             alt="..."
                              width="40"
                              height="40" class="rounded-circle">
                         <a href="#" class="stretched-link"></a>
@@ -101,18 +104,20 @@
                     <div class="mb-1" href=""
                          style="width: 24rem;">
                         <div class="row bg-body position-relative">
-                            <div class="col-md-5">
+                            <div class="col-md-5 ratio ratio-16x9">
                                 <img src="{% mediapath item.image %}"
                                      style="width: 10rem;"
-                                     class="rounded-start"
+                                     class="img-fluid rounded"
                                      alt="...">
                             </div>
                             <div class="col-md-7">
                                 <p class="card-title fw-bold ">{{ item.title|truncatechars:40 }}</p>
                                 <small class="fw-light">{{ item.owner.username }}</small>
-                                <p><small class="fw-light">{{ item.view_count }}
-                                просмотров</small></p>
-                                <a href="{% url 'content:content_detail' item.pk %}" class="stretched-link"></a>
+                                <p><small
+                                        class="fw-light">{{ item.view_count }}
+                                    просмотров</small></p>
+                                <a href="{% url 'content:content_detail' item.pk %}"
+                                   class="stretched-link"></a>
                             </div>
                         </div>
                     </div>

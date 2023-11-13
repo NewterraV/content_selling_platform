@@ -88,9 +88,10 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         formset = self.get_context_data()['formset']
 
         if formset.is_valid():
+            form.instance.owner = self.request.user
             self.object = form.save()
-            self.object.owner = self.request.user
-            self.object.save()
+            # self.object.owner = self.request.user
+            # self.object.save()
             formset.instance = self.object
             formset.save()
         return super().form_valid(form)

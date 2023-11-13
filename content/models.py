@@ -2,16 +2,13 @@ from django.db import models
 
 from config import settings
 from users.models import User, NULLABLE
-from users.services import user_directory_path
+from users.services import user_directory_path_content
 
 
 class Content(models.Model):
     """
     Модель описывающая запись пользователя
     """
-
-    title = models.CharField(max_length=100, verbose_name='заголовок')
-    description = models.TextField(verbose_name='описание')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -19,8 +16,10 @@ class Content(models.Model):
         related_name='Content',
         **NULLABLE
     )
+    title = models.CharField(max_length=100, verbose_name='заголовок')
+    description = models.TextField(verbose_name='описание')
     image = models.ImageField(
-        upload_to=user_directory_path,
+        upload_to=user_directory_path_content,
         verbose_name='изображение',
         **NULLABLE
     )
