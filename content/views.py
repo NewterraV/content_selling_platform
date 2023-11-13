@@ -14,6 +14,8 @@ from content.forms import VideoForm, ContentForm
 from content.models import Content, Video
 from random import sample
 
+from content.tasks import task_get_image
+
 
 class ContentFormsetMixin:
     """
@@ -63,7 +65,6 @@ class ContentDetailView(DetailView):
         context['title'] = self.object.title
         play_list = list(self.model.objects.all().exclude(pk=self.object.pk))
 
-
         # Отображение 10 рандомных записей
         context['play_list'] = sample(play_list, 10) if len(
             play_list) > 10 else play_list
@@ -75,6 +76,7 @@ class ContentListView(ListView):
     """Контроллер для отображения списка контента"""
 
     model = Content
+    extra_context = {'title': 'Видео'}
 
 
 class ContentCreateView(ContentFormsetMixin, CreateView):
@@ -85,15 +87,19 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
     success_url = reverse_lazy('content:content_list')
 
     def form_valid(self, form):
+        """Переопределение для добавления владельца и проверки наличия
+        обложки видео"""
+
         formset = self.get_context_data()['formset']
 
         if formset.is_valid():
             form.instance.owner = self.request.user
             self.object = form.save()
-            # self.object.owner = self.request.user
-            # self.object.save()
+            if not self.object.image:
+                task_get_image.delay(pk=self.object.pk)
             formset.instance = self.object
             formset.save()
+
         return super().form_valid(form)
 
 
@@ -105,15 +111,20 @@ class ContentUpdateView(ContentFormsetMixin, UpdateView):
     success_url = reverse_lazy('content:content_list')
 
     def get_success_url(self):
+        """Переопределение для перенаправления после редактирования
+        контента"""
         return reverse(
             'content:content_detail',
             args=[self.kwargs.get('pk')]
         )
 
     def form_valid(self, form):
+        """ППереопределение для сохранения формсета"""
         formset = self.get_context_data()['formset']
 
         if formset.is_valid():
+            if not self.object.image:
+                task_get_image.delay(pk=self.object.pk)
             formset.instance = self.object
             formset.save()
         return super().form_valid(form)

@@ -1,8 +1,5 @@
 import re
-
-
-class RegExpressionsBase:
-    pass
+from content.src.base import RegExpressionsBase
 
 
 class RegExpressions(RegExpressionsBase):

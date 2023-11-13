@@ -177,6 +177,7 @@ EMAIL_USE_SSL = True
 # Settings Celery
 CELERY_BROKER_URL = os.getenv('CACHES_LOCATION')
 CELERY_RESULT_BACKEND = os.getenv('CACHES_LOCATION')
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
@@ -188,3 +189,5 @@ CELERY_BEAT_SCHEDULE = {
 # https://django-crispy-forms.readthedocs.io/en/latest/
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+API_YOUTUBE_TOKEN = os.getenv('API_YOUTUBE_TOKEN')

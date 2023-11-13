@@ -1,7 +1,7 @@
 from django.db import models
 
 from config import settings
-from users.models import User, NULLABLE
+from users.models import NULLABLE
 from users.services import user_directory_path_content
 
 
@@ -20,8 +20,7 @@ class Content(models.Model):
     description = models.TextField(verbose_name='описание')
     image = models.ImageField(
         upload_to=user_directory_path_content,
-        verbose_name='изображение',
-        **NULLABLE
+        verbose_name='изображение', default=None
     )
     date_update = models.DateTimeField(
         auto_now=True,
@@ -57,5 +56,3 @@ class Video(models.Model):
     url = models.URLField(verbose_name='ссылка на видео')
     video_id = models.CharField(max_length=150, verbose_name='ID видео',
                                 **NULLABLE)
-    image = models.ImageField(upload_to='content/video/',
-                              verbose_name='превью')

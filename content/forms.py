@@ -1,7 +1,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from content.services import RegExpressions
-from crispy_forms.layout import Layout, Fieldset
+from content.src.reg_expressions import RegExpressions
 
 from content.models import Content, Video
 
@@ -73,8 +72,8 @@ class VideoForm(StyleMixin, forms.ModelForm):
     )
 
     def save(self, commit=True):
-        # self.cleaned_data['video_id'] = (
-        #     RegExpressions.get_video_id(self.cleaned_data['url']))
+        """Переопределение для добавления video_id во время сохранения"""
+
         self.instance = super().save(commit=False)
         self.instance.video_id = (
             RegExpressions.get_video_id(self.cleaned_data['url']))
