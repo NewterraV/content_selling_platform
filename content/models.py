@@ -1,11 +1,8 @@
 from django.db import models
 
-from users.models import User
-
-NULLABLE = {
-    'null': True,
-    'blank': True
-}
+from config import settings
+from users.models import User, NULLABLE
+from users.services import user_directory_path
 
 
 class Content(models.Model):
@@ -15,8 +12,15 @@ class Content(models.Model):
 
     title = models.CharField(max_length=100, verbose_name='заголовок')
     description = models.TextField(verbose_name='описание')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='Content',
+        **NULLABLE
+    )
     image = models.ImageField(
-        upload_to='content/content/',
+        upload_to=user_directory_path,
         verbose_name='изображение',
         **NULLABLE
     )
@@ -40,13 +44,6 @@ class Content(models.Model):
     view_count = models.PositiveIntegerField(
         default=0,
         verbose_name='Количество просмотров'
-    )
-    owner = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Владелец',
-        related_name='Content',
-        **NULLABLE
     )
 
 

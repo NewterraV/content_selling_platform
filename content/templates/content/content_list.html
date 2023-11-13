@@ -6,17 +6,25 @@
         <div class="row row-cols-1 row-cols-md-4 g-3">
             {% for content in object_list %}
                 <div class="col">
-                    <div class="card h-100 g-3 bg-body-secondary position-relative">
+                    <div class="card h-100 g-3 bg-body border-white">
                         <img src="{% mediapath content.image %}"
                              class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h6 class="card-title pt-0">{{ content.title|truncatechars:35 }}</h6>
-                            <a href="{% url 'content:content_detail' content.pk %}" class="stretched-link"></a>
-                            <p class="fw-light lh-1 pt-0">{{ content.description|truncatechars:40 }}</p>
-
-                            <small class="fw-light pt-0">{{ content.view_count }}
-                                просмотров</small>
+                        <div class="row justify-content-start">
+                            <div class="col-2 pt-2">
+                                <img src="{% mediapath content.owner.avatar %}"
+                                     alt="..."
+                                     width="32"
+                                     height="32" class="rounded-circle">
+                            </div>
+                            <div class="col-10">
+                                <p class="card-title fw-bold pt-1">{{ content.title|truncatechars:40 }}</p>
+                                <small class="fw-light">{{ content.owner.username }}</small>
+                                <p><small class="fw-light">{{ content.view_count }}
+                                просмотров</small></p>
+                            </div>
                         </div>
+                        <a href="{% url 'content:content_detail' content.pk %}"
+                           class="stretched-link"></a>
                     </div>
                 </div>
             {% endfor %}

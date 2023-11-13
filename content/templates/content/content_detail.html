@@ -29,15 +29,15 @@
                     </div>
                 </div>
                 <div class="row pt-2">
-                    <div class="col-auto bg-body-secondary position-relative">
-                        <img src="https://github.com/mdo.png" alt="mdo"
+                    <div class="col-auto bg-body position-relative">
+                        <img src="{% mediapath object.owner.avatar %}" alt="..."
                              width="40"
                              height="40" class="rounded-circle">
                         <a href="#" class="stretched-link"></a>
                     </div>
                     <div class="col-3">
-                        <div class="row g-0 bg-body-secondary position-relative">
-                            <div class="fs-6 fw-semibold">Автор</div>
+                        <div class="row g-0 bg-body position-relative">
+                            <div class="fs-6 fw-semibold">{{ object.owner.username }}</div>
                             <small class="fw-lighter">Количество
                                 подписчиков
                             </small>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="text fw-light pt-3" style="width: 715px;">
-                    {{ object.description }}
+                    {{ object.description | linebreaksbr }}
                 </div>
                 <form>
                     <div class="row pt-5">
@@ -80,7 +80,7 @@
                                  width="32"
                                  height="32" class="rounded-circle">
                         </div>
-                        <div class="col-auto g-0 bg-body-secondary position-relative">
+                        <div class="col-auto g-0 bg-body position-relative">
                             <span class="fw-normal align-bottom">Автор</span>
                             <a href="#" class="stretched-link"></a>
                         </div>
@@ -100,17 +100,19 @@
                 {% for item in play_list %}
                     <div class="mb-1" href=""
                          style="width: 24rem;">
-                        <div class="row g-3 bg-body-secondary position-relative">
+                        <div class="row bg-body position-relative">
                             <div class="col-md-5">
                                 <img src="{% mediapath item.image %}"
                                      style="width: 10rem;"
                                      class="rounded-start"
                                      alt="...">
                             </div>
-                            <div class="col-md-7 p-2">
-                                <h6 class="">{{ item.title|truncatechars:45 }}</h6>
-                                <p class="fw-light lh-1">{{ item.description|truncatechars:40 }}</p>
-                                <a href="#" class="stretched-link"></a>
+                            <div class="col-md-7">
+                                <p class="card-title fw-bold ">{{ item.title|truncatechars:40 }}</p>
+                                <small class="fw-light">{{ item.owner.username }}</small>
+                                <p><small class="fw-light">{{ item.view_count }}
+                                просмотров</small></p>
+                                <a href="{% url 'content:content_detail' item.pk %}" class="stretched-link"></a>
                             </div>
                         </div>
                     </div>

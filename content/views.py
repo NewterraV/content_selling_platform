@@ -1,11 +1,13 @@
 from django.forms import inlineformset_factory
+from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     ListView,
     DetailView,
     DeleteView,
     CreateView,
-    UpdateView
+    UpdateView,
+    View
 )
 
 from content.forms import VideoForm, ContentForm
@@ -36,6 +38,15 @@ class ContentFormsetMixin:
         return context_data
 
 
+def index(request):
+    """Метод представления главной страницы"""
+    context = {
+        'title': 'Домашняя страница'
+    }
+
+    return render(request, 'content/index.html', context)
+
+
 class ContentDetailView(DetailView):
     """
     Контроллер для отображения детальной информации об экземпляре контента.
@@ -50,7 +61,6 @@ class ContentDetailView(DetailView):
 
         context['video'] = self.object.video.url
         context['title'] = self.object.title
-        # context['owner'] = self.object.owner
         play_list = list(self.model.objects.all().exclude(pk=self.object.pk))
 
 
@@ -79,8 +89,8 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
 
         if formset.is_valid():
             self.object = form.save()
-            # self.object.owner = self.request.user
-            # self.object.save()
+            self.object.owner = self.request.user
+            self.object.save()
             formset.instance = self.object
             formset.save()
         return super().form_valid(form)

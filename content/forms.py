@@ -1,6 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from content.services import RegExpressions
+from crispy_forms.layout import Layout, Fieldset
 
 from content.models import Content, Video
 
@@ -57,13 +58,6 @@ class ContentForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.helper.form_class = 'form-horizontal'
-    #     self.helper.label_class = 'col-lg-2'
-    #     self.helper.field_class = 'col-lg-8'
-
     class Meta:
         model = Content
         fields = ('title', 'description', 'image', 'start_publish',
@@ -77,11 +71,11 @@ class VideoForm(StyleMixin, forms.ModelForm):
         max_length=150,
         required=True,
     )
-    
+
     def save(self, commit=True):
         # self.cleaned_data['video_id'] = (
         #     RegExpressions.get_video_id(self.cleaned_data['url']))
-        self.instance = super().save()
+        self.instance = super().save(commit=False)
         self.instance.video_id = (
             RegExpressions.get_video_id(self.cleaned_data['url']))
         self.instance.save()
