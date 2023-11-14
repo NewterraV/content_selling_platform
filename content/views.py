@@ -1,7 +1,7 @@
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
-from random import sample
+from django.db.models import F
 from django.views.generic import (
     ListView,
     DetailView,
@@ -11,11 +11,11 @@ from django.views.generic import (
     TemplateView
 )
 
-from content.forms import VideoForm, ContentForm
+from content.forms import VideoForm, ContentForm, ContentUpdateForm
 from content.models import Content, Video
 from random import sample
 
-from content.tasks import task_get_image
+from content.tasks import task_get_image, task_delete_img
 
 
 class ContentFormsetMixin:
@@ -48,7 +48,7 @@ class IndexView(ListView):
     template_name = 'content/index.html'
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(is_publish=True)
+        queryset = super().get_queryset().filter(is_publish=True)[:12]
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -86,6 +86,13 @@ class ContentDetailView(DetailView):
 
         return context
 
+    def get_object(self, queryset=None):
+        """Переопределение реализует счетчик просмотров"""
+        obj = super().get_object(queryset)
+        obj.view_count += 1
+        obj.save()
+        return obj
+
 
 class ContentListView(LoginRequiredMixin, ListView):
     """Контроллер для отображения списка контента"""
@@ -122,9 +129,9 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         return super().form_valid(form)
 
 
-class ContentUpdateView(ContentFormsetMixin, UpdateView):
+class ContentUpdateView(UpdateView):
     model = Content
-    form_class = ContentForm
+    form_class = ContentUpdateForm
 
     success_url = reverse_lazy('content:content_list')
 
@@ -136,13 +143,26 @@ class ContentUpdateView(ContentFormsetMixin, UpdateView):
             args=[self.kwargs.get('pk')]
         )
 
-    def form_valid(self, form):
-        """ППереопределение для сохранения формсета"""
-        formset = self.get_context_data()['formset']
+    # def form_valid(self, form):
+    #     """ППереопределение для сохранения формсета"""
+    #     formset = self.get_context_data()['formset']
+    #
+    #     if formset.is_valid():
+    #         if not self.object.image:
+    #             task_get_image.delay(pk=self.object.pk)
+    #         formset.instance = self.object
+    #         formset.save()
+    #     return super().form_valid(form)
 
-        if formset.is_valid():
-            if not self.object.image:
-                task_get_image.delay(pk=self.object.pk)
-            formset.instance = self.object
-            formset.save()
+
+class ContentDeleteView(DeleteView):
+    """Представление для удаления контента"""
+
+    model = Content
+    success_url = reverse_lazy('content:content_list')
+
+    def form_valid(self, form):
+        """Переопределение для удаления файлов связанных с контентом"""
+        if self.object.image:
+            task_delete_img.delay(path_to=str(self.object.image))
         return super().form_valid(form)

@@ -3,8 +3,8 @@
 
 {% block content %}
     <div class="container">
-        <div class="row">
-            <div class="col-8">
+        <div class="row row-cols-auto">
+            <div class="col-md-8">
                 <div class="ratio ratio-16x9">
                     <iframe
                             src="https://www.youtube.com/embed/{{ object.video.video_id }}"
@@ -56,8 +56,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="text fw-light p-3 bg-light rounded-3" style="width: 715px;">
-                    {{ object.description | linebreaksbr }}
+                <div class="rounded-3 bg-light p-3">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne"
+                                    aria-expanded="true"
+                                    aria-controls="collapseOne">
+                                Опубликовано {{ object.date_update.date }}
+                                Просмотров: {{ object.view_count }}
+                            </button>
+                        </h2>
+                        <div id="collapseOne"
+                             class="accordion-collapse collapse show p-3"
+                             aria-labelledby="headingOne"
+                             data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                {{ object.description | linebreaksbr }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <form>
                     <div class="row pt-3 d-flex justify-content-end">
@@ -87,19 +106,19 @@
                     <div class="row">
                         <div class="col-1"></div>
                         <div class="col-11">
-                            <p class="fw-light bg-light rounded p-3">Комментарий</p>
+                            <p class="fw-light bg-light rounded p-3">
+                                Комментарий</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 {% for item in play_list %}
                     <div class="mb-1" href=""
                          style="width: 24rem;">
                         <div class="row bg-body position-relative">
                             <div class="col-md-5 ratio ratio-16x9">
                                 <img src="{% mediapath item.image %}"
-                                     style="width: 10rem;"
                                      class="img-fluid rounded"
                                      alt="...">
                             </div>

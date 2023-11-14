@@ -3,30 +3,35 @@
 
 {% block content %}
     <div class="container">
-        <div class="row row-cols-1 row-cols-md-4 g-3">
+        <div class="row row-cols-1 row-cols-md-2 gx-5 gy-2">
             {% for content in object_list %}
-                <div class="col">
-                    <div class="card h-100 g-3 bg-body border-white">
-                        <div class="ratio ratio-16x9">
+                <div class="mb-1" href="">
+                    <div class="row bg-body">
+                        <div class="col-4 ratio ratio-16x9">
                             <img src="{% mediapath content.image %}"
-                             class="rounded" alt="...">
+                                 class="img-fluid rounded"
+                                 alt="...">
+                            <a href="{% url 'content:content_detail' content.pk %}"
+                               class="stretched-link"></a>
                         </div>
-                        <div class="row justify-content-start">
-                            <div class="col-2 pt-2">
-                                <img src="{% mediapath content.owner.avatar %}"
-                                     alt="..."
-                                     width="32"
-                                     height="32" class="rounded-circle">
-                            </div>
-                            <div class="col-10">
-                                <p class="card-title fw-bold pt-1">{{ content.title|truncatechars:40 }}</p>
-                                <small class="fw-light">{{ content.owner.username }}</small>
-                                <p><small class="fw-light">{{ content.view_count }}
+                        <div class="col-5">
+                            <p class="card-title fw-bold ">{{ content.title|truncatechars:40 }}</p>
+                            <small class="fw-light">{{ content.owner.username }}</small>
+                            <p><small
+                                    class="fw-light">{{ content.view_count }}
                                 просмотров</small></p>
-                            </div>
                         </div>
-                        <a href="{% url 'content:content_detail' content.pk %}"
-                           class="stretched-link"></a>
+                        <div class="col-3 d-grid gap-1">
+                            <a href="{% url 'content:content_update' content.pk %}" class="btn btn-outline-primary btn-sm">
+                                Редактировать
+                            </a>
+                            <a class="btn btn-outline-primary btn-sm" href="{% url 'content:content_delete' content.pk %}">
+                                Скрыть
+                            </a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'content:content_delete' content.pk %}">
+                                Удалить
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

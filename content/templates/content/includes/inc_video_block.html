@@ -1,0 +1,35 @@
+{% load templatetags %}
+<div class="col">
+    <div class="card h-100 g-3 bg-body border-white">
+        <div class="ratio ratio-16x9">
+            {% if content.image %}
+                <img src="{{ content.image | mediapath }}"
+                     class="rounded">
+            {% else %}
+                <div class="d-flex">
+                    <div class="spinner-border text-primary"
+                         role="status">
+                        <span class="visually-hidden">Изображение потерялось, ищем...</span>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="row justify-content-start">
+            <div class="col-2 pt-2">
+                <img src="{% mediapath content.owner.avatar %}"
+                     alt="..."
+                     width="32"
+                     height="32" class="rounded-circle">
+            </div>
+            <div class="col-10">
+                <p class="card-title fw-bold pt-1">{{ content.title|truncatechars:45 }}</p>
+                <small class="fw-light">{{ content.owner.username }}</small>
+                <p><small
+                        class="fw-light">{{ content.view_count }}
+                    просмотров</small></p>
+            </div>
+        </div>
+        <a href="{% url 'content:content_detail' content.pk %}"
+           class="stretched-link"></a>
+    </div>
+</div>

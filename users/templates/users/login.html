@@ -1,29 +1,20 @@
-{% extends 'content/base.html' %}
+{% extends 'users/base.html' %}
 {% load templatetags %}
 {% load crispy_forms_tags %}
-{% crispy content_form content.helper %}
+{% crispy login login.helper %}
 
 {% block content %}
-    <div class="container">
-        <form method="post" enctype="multipart/form-data">
-            <div class="row col-12 mx-auto">
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-body">
-                            {% csrf_token %}
-                            {{ form|crispy }}
-                            <button class="btn btn-primary" type="submit">
-                                Войти
-                            </button>
-                            <a class="btn btn-outline-secondary"
-                               href="{% url 'users:user_create' %}">Зарегистрироваться</a>
-                            <a href=""
-                               class="btn btn-link" type="button">Забыли
-                                пароль?</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
+    <form method="post" enctype="multipart/form-data">
+        <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg"
+             alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Пожалуйста, войдите</h1>
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Войти
+        </button>
+    </form>
+    <a class="link p-3"
+           href="{% url 'users:user_create' %}">Зарегистрироваться</a>
+        <p class="mt-5 mb-3 text-muted">&copy; Newterra.inc 2023</p>
 {% endblock %}
