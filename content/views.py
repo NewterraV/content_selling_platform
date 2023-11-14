@@ -134,7 +134,7 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         return super().form_valid(form)
 
 
-class ContentUpdateView(UpdateView):
+class ContentUpdateView(ContentFormsetMixin, UpdateView):
     model = Content
     form_class = ContentUpdateForm
 
