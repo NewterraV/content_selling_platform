@@ -1,0 +1,13 @@
+<form action="{% url 'subscription:subscribe' object.owner.pk %}"
+      method="GET" id="ajax_subscribe">
+    {% csrf_token %}
+    {% if subs_paid %}
+        <p>Платная подписка истечет: </p>
+    {% elif subs %}
+        <input type="submit" class="btn btn-outline-dark" id="subs"
+               value="Отписаться" >
+    {% else %}
+        <input type="submit" class="btn btn-outline-dark" id="subs"
+               value="Подписаться">
+    {% endif %}
+</form>

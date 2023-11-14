@@ -1,7 +1,7 @@
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
-from django.db.models import F
+from django.db.models import Q
 from django.views.generic import (
     ListView,
     DetailView,
@@ -16,6 +16,7 @@ from content.models import Content, Video
 from random import sample
 
 from content.tasks import task_get_image, task_delete_img
+from subscription.models import Subscription
 
 
 class ContentFormsetMixin:
@@ -53,14 +54,24 @@ class IndexView(ListView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        subs_paid = list(self.model.objects.filter(is_publish=True).order_by(
-            '-date_update'))
-        purchased = list(self.model.objects.filter(is_publish=True).order_by(
-            'date_update'))
-        context_data['subs_paid'] = subs_paid[:8]
-        context_data['purchased'] = sample(purchased, 4) if len(
-            purchased) > 4 else purchased
         context_data['title'] = 'NewTerra'
+
+        if not self.request.user.is_anonymous:
+            subs_author = [obj.author for obj in
+                           Subscription.objects.filter(
+                               owner=self.request.user)]
+            subs_paid_content = list(
+                self.model.objects.filter(Q(owner__in=subs_author)).order_by(
+                    '-date_update')) if subs_author else None
+
+            purchased = list(
+                self.model.objects.filter(is_publish=True).order_by(
+                    '-date_update'))
+            if subs_paid_content:
+                context_data['subs_paid_content'] = subs_paid_content[:8]
+            if purchased:
+                context_data['purchased'] = sample(purchased, 4) if len(
+                    purchased) > 4 else purchased
 
         return context_data
 
@@ -84,6 +95,10 @@ class ContentDetailView(DetailView):
         # Отображение 10 рандомных записей
         context['play_list'] = sample(play_list, 10) if len(
             play_list) > 10 else play_list
+        if not self.request.user.is_anonymous:
+            context['subs'] = self.request.user.subs.filter(
+                author=self.object.owner
+            ).exists()
 
         return context
 
@@ -134,7 +149,7 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         return super().form_valid(form)
 
 
-class ContentUpdateView(ContentFormsetMixin, UpdateView):
+class ContentUpdateView(UpdateView):
     model = Content
     form_class = ContentUpdateForm
 

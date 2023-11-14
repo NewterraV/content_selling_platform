@@ -2,139 +2,138 @@
 {% load templatetags %}
 
 {% block content %}
-    <div class="container">
-        <div class="row row-cols-auto">
-            <div class="col-md-8">
-                <div class="ratio ratio-16x9">
-                    <iframe
-                            src="https://www.youtube.com/embed/{{ object.video.video_id }}"
-                            title="YouTube video player"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen
-                            class="rounded-3">
+<div class="container">
+    <div class="row row-cols-auto">
+        <div class="col-md-8">
+            <div class="ratio ratio-16x9">
+                <iframe
+                        src="https://www.youtube.com/embed/{{ object.video.video_id }}?autoplay=1"
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        class="rounded-3">
 
-                    </iframe>
+                </iframe>
+            </div>
+            <div class="row pt-3">
+                <div class="col-11">
+                    <h4 class="gap-3 pt-2">
+                        {{ object.title }}
+                    </h4>
                 </div>
-                <div class="row pt-3">
-                    <div class="col-11">
-                        <h4 class="gap-3 pt-2">
-                            {{ object.title }}
-                        </h4>
-                    </div>
-                    <div class="col-1">
-                        <div class="pt-2 d-grid justify-content-end ">
-                            <button class="btn btn-outline-primary"
-                                    type="button">
-                                Like
-                            </button>
-                        </div>
+                <div class="col-1">
+                    <div class="pt-2 d-grid justify-content-end ">
+                        <button class="btn btn-outline-primary"
+                                type="button">
+                            Like
+                        </button>
                     </div>
                 </div>
-                <div class="row pt-2">
-                    <div class="col-auto bg-body position-relative">
-                        <img src="{% mediapath object.owner.avatar %}"
-                             alt="..."
-                             width="40"
-                             height="40" class="rounded-circle">
+            </div>
+            <div class="row pt-2">
+                <div class="col-auto bg-body position-relative">
+                    <img src="{% mediapath object.owner.avatar %}"
+                         alt="..."
+                         width="40"
+                         height="40" class="rounded-circle">
+                    <a href="#" class="stretched-link"></a>
+                </div>
+                <div class="col-3">
+                    <div class="row g-0 bg-body position-relative">
+                        <div class="fs-6 fw-semibold">{{ object.owner.username }}</div>
+                        <small class="fw-lighter">Количество
+                            подписчиков
+                        </small>
                         <a href="#" class="stretched-link"></a>
                     </div>
-                    <div class="col-3">
-                        <div class="row g-0 bg-body position-relative">
-                            <div class="fs-6 fw-semibold">{{ object.owner.username }}</div>
-                            <small class="fw-lighter">Количество
-                                подписчиков
-                            </small>
-                            <a href="#" class="stretched-link"></a>
-                        </div>
-                    </div>
-                    <div class="col-auto d-md-block">
-                        <div class="d-grid gap-2 d-md-block">
-                            <button class="btn btn-dark"
-                                    type="button">
-                                Подписаться
-                            </button>
-                        </div>
-                    </div>
                 </div>
-                <div class="rounded-3 bg-light p-3">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#collapseOne"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                Опубликовано {{ object.date_update.date }}
-                                Просмотров: {{ object.view_count }}
-                            </button>
-                        </h2>
-                        <div id="collapseOne"
-                             class="accordion-collapse collapse show p-3"
-                             aria-labelledby="headingOne"
-                             data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                {{ object.description | linebreaksbr }}
-                            </div>
-                        </div>
+                <div class="col-auto d-md-block">
+                    {% if user.is_authenticated %}
+                    <div class="d-grid gap-2 d-md-block">
+                        {% include 'subscription/includes/inc_subscribe.html' %}
                     </div>
+                    {% endif %}
                 </div>
-                <form>
-                    <div class="row pt-3 d-flex justify-content-end">
-                        <div class="mb-3 col-12">
-                            <input type="text" id="disabledTextInput"
-                                   class="form-control"
-                                   placeholder="Оставьте комментарий...">
-                            <a class="link" href="#"></a>
-                        </div>
-                    </div>
-                </form>
-                <div>
-                    <div class="row pt-3">
-                        <div class="col-auto">
-                            <img src="https://github.com/mdo.png" alt="mdo"
-                                 width="32"
-                                 height="32" class="rounded-circle">
-                        </div>
-                        <div class="col-auto g-0 bg-body position-relative">
-                            <span class="fw-normal align-bottom">Автор</span>
-                            <a href="#" class="stretched-link"></a>
-                        </div>
-                        <div class="col-auto">
-                            <span class="fw-lighter align-bottom">Время</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-11">
-                            <p class="fw-light bg-light rounded p-3">
-                                Комментарий</p>
+            </div>
+            <div class="rounded-3 bg-light p-3">
+                <div class="accordion-item gy-2">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne"
+                                aria-expanded="true"
+                                aria-controls="collapseOne">
+                            Опубликовано {{ object.date_update.date }}
+                            Просмотров: {{ object.view_count }}
+                        </button>
+                    </h2>
+                    <div id="collapseOne"
+                         class="accordion-collapse collapse show p-3"
+                         aria-labelledby="headingOne"
+                         data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            {{ object.description | linebreaksbr }}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                {% for item in play_list %}
-                    <div class="mb-1" href=""
-                         style="width: 24rem;">
-                        <div class="row bg-body position-relative">
-                            <div class="col-md-5 ratio ratio-16x9">
-                                <img src="{% mediapath item.image %}"
-                                     class="img-fluid rounded"
-                                     alt="...">
-                            </div>
-                            <div class="col-md-7">
-                                <p class="card-title fw-bold ">{{ item.title|truncatechars:40 }}</p>
-                                <small class="fw-light">{{ item.owner.username }}</small>
-                                <p><small
-                                        class="fw-light">{{ item.view_count }}
-                                    просмотров</small></p>
-                                <a href="{% url 'content:content_detail' item.pk %}"
-                                   class="stretched-link"></a>
-                            </div>
-                        </div>
+            <form>
+                <div class="row pt-3 d-flex justify-content-end">
+                    <div class="mb-3 col-12">
+                        <input type="text" id="disabledTextInput"
+                               class="form-control"
+                               placeholder="Оставьте комментарий...">
+                        <a class="link" href="#"></a>
                     </div>
-                {% endfor %}
+                </div>
+            </form>
+            <div>
+                <div class="row pt-3">
+                    <div class="col-auto">
+                        <img src="https://github.com/mdo.png" alt="mdo"
+                             width="32"
+                             height="32" class="rounded-circle">
+                    </div>
+                    <div class="col-auto g-0 bg-body position-relative">
+                        <span class="fw-normal align-bottom">Автор</span>
+                        <a href="#" class="stretched-link"></a>
+                    </div>
+                    <div class="col-auto">
+                        <span class="fw-lighter align-bottom">Время</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-11">
+                        <p class="fw-light bg-light rounded p-3">
+                            Комментарий</p>
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="col-md-4">
+            {% for item in play_list %}
+                <div class="mb-1" href=""
+                     style="width: 24rem;">
+                    <div class="row bg-body position-relative">
+                        <div class="col-md-5 ratio ratio-16x9">
+                            <img src="{% mediapath item.image %}"
+                                 class="img-fluid rounded"
+                                 alt="...">
+                        </div>
+                        <div class="col-md-7">
+                            <p class="card-title fw-bold ">{{ item.title|truncatechars:40 }}</p>
+                            <small class="fw-light">{{ item.owner.username }}</small>
+                            <p><small
+                                    class="fw-light">{{ item.view_count }}
+                                просмотров</small></p>
+                            <a href="{% url 'content:content_detail' item.pk %}"
+                               class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+</div>
 {% endblock %}
