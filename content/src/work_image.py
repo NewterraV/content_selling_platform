@@ -47,3 +47,12 @@ class WorkImage:
         img = Image.open(img_path)
         img_crop = img.crop(box)
         img_crop.save(img_path, quality=95)
+
+    def delete_file(self, path_to):
+        """
+        Метод для удаления указанного файла
+        :param path_to: Путь до файла
+        :return: None
+        """
+        pth = os.path.join(self.media_path, path_to)
+        os.remove(pth)

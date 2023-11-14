@@ -1,0 +1,31 @@
+{% extends 'users/base.html' %}
+{% load templatetags %}
+
+{% block content %}
+    <div>
+        <h1 class="h2 mb-3 fw-bold">Вы уверены?</h1>
+        <p class="fw-light mb-3 fw-normal">Будет
+            удалено: {{ object.title }}.</p>
+        {% if object.view_count > 1000 %}
+            <p class="fw-light mb-3 fw-normal">"Это видео популярно, оно
+                набрало: {{ object.view_count }} просмотров.</p>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            <div class="d-grid gap-3">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="w-100 btn btn-lg btn-outline-secondary"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Данное действие невозможно отменить"
+                        type="submit">
+                    Удалить
+                </button>
+                <button href="{% url 'content:content_list' %}"
+                        class="w-100 btn btn-lg btn-primary">Отмена
+                </button>
+            </div>
+        </form>
+    </div>
+    <p class="mt-5 mb-3 text-muted">&copy; Newterra.inc 2023</p>
+{% endblock %}

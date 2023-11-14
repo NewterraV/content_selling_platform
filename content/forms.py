@@ -31,6 +31,14 @@ class ContentForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
+    is_r = forms.BooleanField(
+
+        label="Контент 18+",
+        help_text="Установите галочку если контент содержит элементы не "
+                  "предназначенные для просмотра лиц не достигших 18 лет",
+        required=False,
+    )
+
     start_publish = forms.DateTimeField(
         label="Время публикации",
         widget=forms.DateTimeInput(
@@ -49,6 +57,30 @@ class ContentForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
+    class Meta:
+        model = Content
+        fields = ('title', 'description', 'image', 'start_publish',
+                  'is_publish', 'is_r')
+
+
+class ContentUpdateForm(StyleMixin,  forms.ModelForm):
+    """Класс описывающий форму для обновления экземпляра контента"""
+
+    title = forms.CharField(
+        label="Название",
+        help_text="Введите название записи. Ограничение 150 символов.",
+        max_length=100,
+        required=True,
+    )
+    image = forms.ImageField(
+        label="Изображение",
+        help_text="Используйте изображение с соотношением сторон 16 на 9. "
+                  "Данное изображение будет использовано как заставка к "
+                  "видео . Если поле оставить пустым, то будет использовано "
+                  "превью видео из YouTube.",
+        required=False,
+    )
+
     is_r = forms.BooleanField(
 
         label="Контент 18+",
@@ -59,7 +91,7 @@ class ContentForm(StyleMixin, forms.ModelForm):
 
     class Meta:
         model = Content
-        fields = ('title', 'description', 'image', 'start_publish',
+        fields = ('title', 'description', 'image',
                   'is_publish', 'is_r')
 
 

@@ -39,17 +39,17 @@
 <main>
     <h1 class="visually-hidden">Headers examples</h1>
 
-    <div class="container">
+    <div class="container " container="body">
         <header class="d-flex flex-wrap justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <a href="/"
                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-primary text-decoration-none">
-                <span class="fs-4">Newterra</span>
+                <span class="fs-4">NewTerra</span>
             </a>
             <ul class="nav col-12 col-md-auto mb-3 justify-content-center mb-md-0">
                 <li><a href="#" class="nav-link px-2 link-danger">Оформить
                     подписку</a>
                 </li>
-                <li><a href="{% url 'content:content_list' %}"
+                <li><a href="#"
                        class="nav-link px-2 link-primary ">Контент</a>
                 </li>
                 <li><a href="#" class="nav-link px-2 link-primary">Pricing</a>
@@ -73,7 +73,7 @@
                         <img src="{% mediapath user.avatar %}" alt="mdo"
                              width="32" height="32" class="rounded-circle">
                     {% else %}
-                        <img src="#" alt="mdo"
+                        <img src="{% mediapath user.avatar %}" alt="mdo"
                              width="32" height="32" class="rounded-circle">
                     {% endif %}
                 </a>
@@ -81,7 +81,7 @@
                     <ul class="dropdown-menu text-small"
                         aria-labelledby="dropdownUser1">
                         <h5
-                            class="mb-3 text-secondary text-center">{{ user.username }}
+                                class="mb-3 text-secondary text-center">{{ user.username }}
                         </h5>
                         <li>
                             <hr class="dropdown-divider">
@@ -89,7 +89,8 @@
                         <li><a class="dropdown-item text-primary"
                                href="{% url 'content:content_create' %}">Добавить
                             видео</a></li>
-                        <li><a class="dropdown-item text-primary" href="#">Панель
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'content:content_list' %}">Панель
                             управления</a>
                         </li>
                         <li><a class="dropdown-item text-primary"
@@ -111,6 +112,21 @@
                                href="{% url 'users:user_create' %}">Регистрация</a>
                         </li>
                     </ul>
+
+{#                    {% if content.image %}#}
+{#                        <img src="{{ content.image | mediapath }}"#}
+{#                             class="rounded">#}
+{#                    {% else %}#}
+{#                        <div class="d-flex">#}
+{#                            <div class="spinner-border text-primary"#}
+{#                                 role="status">#}
+{#                                <span class="visually-hidden">Изображение потерялось, ищем...</span>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+
+
+
                 {% endif %}
 
             </div>

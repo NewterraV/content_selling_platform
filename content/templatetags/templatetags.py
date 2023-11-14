@@ -10,3 +10,9 @@ register = template.Library()
 @register.simple_tag
 def mediapath(image_path):
     return f'/media/{image_path}'
+
+
+@register.filter
+def mediapath(image_path):
+    return f'/media/{image_path}'
+

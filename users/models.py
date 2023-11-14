@@ -21,27 +21,27 @@ class User(AbstractUser):
 
     phone = models.CharField(
         max_length=10,
-        verbose_name=_('phone'),
+        verbose_name='Телефон',
+        unique=True
+    )
+    username = models.CharField(
+        max_length=30,
+        verbose_name='Псевдоним',
         unique=True
     )
     email = models.EmailField(verbose_name=_('email'))
-    username = models.CharField(
-        max_length=30,
-        verbose_name=_('Username'),
-        unique=True
-        )
     first_name = models.CharField(
         max_length=50,
-        verbose_name=_('first_name'),
+        verbose_name='Имя',
         **NULLABLE
     )
     last_name = models.CharField(
         max_length=50,
-        verbose_name=_('last_name'),
+        verbose_name='Фамилия',
         **NULLABLE
     )
     birthday = models.DateField(
-        verbose_name=_('birthday'),
+        verbose_name='День рождения',
     )
     is_active = models.BooleanField(
         default=False,
@@ -56,7 +56,7 @@ class User(AbstractUser):
     )
     avatar = models.ImageField(
         upload_to='users/avatar/',
-        verbose_name=_('avatar'),
+        verbose_name='Аватар',
         default='default_avatar.jpg'
     )
 

@@ -1,6 +1,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import MultiWidgetField, Field, Layout, Div
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, \
+    UsernameField
 from django import forms
 
 from content.forms import StyleMixin
@@ -16,7 +17,7 @@ class RegisterForm(StyleMixin, UserCreationForm):
             attrs={'type': 'date'},
         ),
         required=True
-        )
+    )
 
     phone = forms.CharField(
         label="Телефон",
@@ -31,7 +32,6 @@ class RegisterForm(StyleMixin, UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper.label_class = 'form-floating'
 
     class Meta:
         model = User
@@ -49,4 +49,21 @@ class RegisterForm(StyleMixin, UserCreationForm):
 
 
 class LoginForm(StyleMixin, AuthenticationForm):
-    pass
+    username = UsernameField(
+        label='',
+        widget=forms.TextInput(
+            attrs={"autofocus": True,
+                   'placeholder': '9397190195',
+                   'type': 'phone'
+                   }))
+    password = forms.CharField(
+        label='',
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={"autocomplete": "current-password",
+                   'placeholder': 'Пароль'}
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
