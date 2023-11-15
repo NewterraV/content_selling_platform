@@ -12,8 +12,12 @@
                     {{ form | crispy }}
                 </div>
                 <div class="col-6">
-                    {{ formset.management_form }}
-                    {% for form in formset.forms %}
+                    {{ content_formset.management_form }}
+                    {% for form in content_formset.forms %}
+                        {{ form | crispy }}
+                    {% endfor %}
+                    {{ product_formset.management_form }}
+                    {% for form in product_formset.forms %}
                         {{ form | crispy }}
                     {% endfor %}
                 </div>

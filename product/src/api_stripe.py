@@ -58,6 +58,19 @@ class APIStripe(BaseAPI):
 
         return {'id': response['id'], 'url': response['url']}
 
+    def delete_product(self, product_id: str,) ->None:
+        """
+        Метод удаляет продукт на стороне сервера stripe
+        :param product_id: id продукта stripe
+        :return: None
+        """
+
+        stripe.api_key = self.token
+        stripe.Product.modify(
+            product_id,
+            active=False,
+        )
+
     # def get_payment_status(self, payment_id):
     #     """Метод проверяет статус платежа"""
     #     payment = Pay.objects.get(id=pk)
@@ -66,9 +79,3 @@ class APIStripe(BaseAPI):
     #     if response["payment_status"] == 'unpaid':
     #         return False
     #     return True
-
-
-class APIStripeMixin:
-    """Миксин класс APIStripe"""
-    def __init__(self):
-        self.stripe = APIStripe()

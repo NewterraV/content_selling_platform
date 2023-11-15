@@ -35,9 +35,17 @@ class Content(models.Model):
         default=False,
         verbose_name='публичный доступ'
     )
-    is_r = models.BooleanField(
+    is_free = models.BooleanField(
+        default=True,
+        verbose_name='Бесплатный контент'
+    )
+    is_paid_subs = models.BooleanField(
         default=False,
-        verbose_name='контент 18+'
+        verbose_name='Контент в подписке на пользователя'
+    )
+    is_src_subs = models.BooleanField(
+        default=False,
+        verbose_name='Контент в подписке на сервис'
     )
     view_count = models.PositiveIntegerField(
         default=0,

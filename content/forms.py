@@ -19,7 +19,20 @@ class ContentForm(StyleMixin, forms.ModelForm):
     title = forms.CharField(
         label="Название",
         help_text="Введите название записи. Ограничение 150 символов.",
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "Лучшее название на планете..."},
+        ),
         max_length=100,
+        required=True,
+    )
+    description = forms.CharField(
+        label="Описание",
+        help_text="Введите название записи. Ограничение 150 символов.",
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': "Лучшее Описание на планете..."},
+        ),
         required=True,
     )
     image = forms.ImageField(
@@ -31,11 +44,12 @@ class ContentForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
-    is_r = forms.BooleanField(
+    is_free = forms.BooleanField(
 
-        label="Контент 18+",
-        help_text="Установите галочку если контент содержит элементы не "
-                  "предназначенные для просмотра лиц не достигших 18 лет",
+        label="Бесплатный контент",
+        help_text="Установите галочку если контент будет доступен всем "
+                  "пользователям без какой-либо оплаты."
+                  "Если активно, то будет игнорироваться поле 'цена'",
         required=False,
     )
 
@@ -57,21 +71,53 @@ class ContentForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
+    is_paid_subs = forms.BooleanField(
+
+        label="Контент в подписке на пользователя",
+        help_text='Установите галочку если контент будет доступен всем '
+                  'пользователям оплатившим подписку на вас',
+        required=False,
+    )
+
+    is_src_subs = forms.BooleanField(
+
+        label="Контент в подписке на сервис",
+        help_text='Установите галочку если контент будет доступен всем '
+                  'пользователям оплатившим подписку на сервис. Вы будете'
+                  'получать ежемесячное роялти в зависимости от просмотров',
+        required=False,
+    )
+
     class Meta:
         model = Content
         fields = ('title', 'description', 'image', 'start_publish',
-                  'is_publish', 'is_r')
+                  'is_publish', 'is_free', 'is_paid_subs', 'is_src_subs')
 
 
-class ContentUpdateForm(StyleMixin,  forms.ModelForm):
+class ContentUpdateForm(StyleMixin, forms.ModelForm):
     """Класс описывающий форму для обновления экземпляра контента"""
 
     title = forms.CharField(
         label="Название",
         help_text="Введите название записи. Ограничение 150 символов.",
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "Лучшее название на планете..."},
+        ),
         max_length=100,
         required=True,
     )
+
+    description = forms.CharField(
+        label="Описание",
+        help_text="Введите название записи. Ограничение 150 символов.",
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "Лучшее Описание на планете..."},
+        ),
+        required=True,
+    )
+
     image = forms.ImageField(
         label="Изображение",
         help_text="Используйте изображение с соотношением сторон 16 на 9. "
@@ -81,24 +127,46 @@ class ContentUpdateForm(StyleMixin,  forms.ModelForm):
         required=False,
     )
 
-    is_r = forms.BooleanField(
+    is_free = forms.BooleanField(
 
-        label="Контент 18+",
-        help_text="Установите галочку если контент содержит элементы не "
-                  "предназначенные для просмотра лиц не достигших 18 лет",
+        label="Бесплатный контент",
+        help_text="Установите галочку если контент будет доступен всем "
+                  "пользователям без какой-либо оплаты."
+                  "Если активно, то будет игнорироваться поле 'цена'",
+        required=False,
+    )
+
+    is_paid_subs = forms.BooleanField(
+
+        label="Контент в подписке на пользователя",
+        help_text='Установите галочку если контент будет доступен всем '
+                  'пользователям оплатившим подписку на вас',
+        required=False,
+    )
+
+    is_src_subs = forms.BooleanField(
+
+        label="Контент в подписке на сервис",
+        help_text='Установите галочку если контент будет доступен всем '
+                  'пользователям оплатившим подписку на сервис. Вы будете'
+                  'получать ежемесячное роялти в зависимости от просмотров',
         required=False,
     )
 
     class Meta:
         model = Content
         fields = ('title', 'description', 'image',
-                  'is_publish', 'is_r')
+                  'is_publish', 'is_free', 'is_paid_subs', 'is_src_subs')
 
 
 class VideoForm(StyleMixin, forms.ModelForm):
     url = forms.URLField(
         help_text="Ссылка на видео размещенное на видеохостинге YouTube."
                   "Ссылки на другой видеохостинг работать не будут. ",
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': "https://www.youtube.com/..."},
+        ),
         max_length=150,
         required=True,
     )

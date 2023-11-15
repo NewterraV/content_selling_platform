@@ -2,7 +2,7 @@ from django.db import models
 
 from config import settings
 from content.models import Content
-from users.models import NULLABLE
+from users.models import NULLABLE, User
 
 
 class Currency(models.TextChoices):
@@ -22,7 +22,7 @@ class Product(models.Model):
         **NULLABLE
     )
     user = models.OneToOneField(
-        Content,
+        User,
         on_delete=models.CASCADE,
         verbose_name='Продукт',
         related_name='product_user',
@@ -40,29 +40,22 @@ class Product(models.Model):
         **NULLABLE,
     )
 
-
-class Price(models.Model):
-    """Модель цены продукта"""
-
-    product = models.OneToOneField(
-        Product,
-        on_delete=models.CASCADE,
-        related_name='price',
-        verbose_name='продукт'
-    )
-
     price_stripe_id = models.CharField(
-        max_length=100,
+        max_length=150,
         verbose_name='price_stripe_id',
         **NULLABLE,
     )
 
     price = models.PositiveIntegerField(
-
+        **NULLABLE,
+        verbose_name='"цена"'
     )
     currency = models.CharField(
         max_length=3,
         choices=Currency.choices,
+        default=Currency.RUB,
+        ** NULLABLE,
+        verbose_name='валюта'
     )
 
 

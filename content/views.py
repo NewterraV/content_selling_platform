@@ -16,6 +16,9 @@ from content.models import Content, Video
 from random import sample
 
 from content.tasks import task_get_image, task_delete_img
+from product.forms import ProductForm
+from product.models import Product
+from product.tasks import task_create_product, task_delete_product
 from subscription.models import Subscription
 
 
@@ -29,16 +32,25 @@ class ContentFormsetMixin:
         """Переопределние добавляет формсет содержания рассылки"""
 
         context_data = super().get_context_data(**kwargs)
-        content_formset = inlineformset_factory(Content, Video,
-                                                form=VideoForm,
-                                                extra=self.extra,
-                                                can_delete=False)
+        content_form = inlineformset_factory(Content, Video,
+                                             form=VideoForm,
+                                             extra=self.extra,
+                                             can_delete=False)
+        product_form = inlineformset_factory(Content, Product,
+                                             form=ProductForm,
+                                             extra=self.extra,
+                                             can_delete=False)
         if self.request.method == 'POST':
-            formset = content_formset(self.request.POST, instance=self.object)
+            content_formset = content_form(self.request.POST,
+                                           instance=self.object)
+            product_formset = product_form(self.request.POST,
+                                         instance=self.object)
         else:
-            formset = content_formset(instance=self.object)
+            content_formset = content_form(instance=self.object)
+            product_formset = product_form(instance=self.object)
 
-        context_data['formset'] = formset
+        context_data['content_formset'] = content_formset
+        context_data['product_formset'] = product_formset
         return context_data
 
 
@@ -136,15 +148,22 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         """Переопределение для добавления владельца и проверки наличия
         обложки видео"""
 
-        formset = self.get_context_data()['formset']
+        product_formset = self.get_context_data()['product_formset']
+        content_formset = self.get_context_data()['content_formset']
 
-        if formset.is_valid():
+        if content_formset.is_valid():
             form.instance.owner = self.request.user
             self.object = form.save()
             if not self.object.image:
                 task_get_image.delay(pk=self.object.pk)
-            formset.instance = self.object
-            formset.save()
+            content_formset.instance = self.object
+            content_formset.save()
+
+        if not self.object.is_free:
+            if product_formset.is_valid():
+                product_formset.instance = self.object
+                product_formset.save()
+                task_create_product.delay(self.object.product.pk)
 
         return super().form_valid(form)
 
@@ -190,6 +209,8 @@ class ContentDeleteView(DeleteView):
 
     def form_valid(self, form):
         """Переопределение для удаления файлов связанных с контентом"""
+        if not self.object.is_free:
+            task_delete_product.delay(self.object.product.stripe_id,)
         if self.object.image:
             task_delete_img.delay(path_to=str(self.object.image))
         return super().form_valid(form)

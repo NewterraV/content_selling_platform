@@ -1,9 +1,8 @@
 from abc import ABC
 from typing import Any
 
-from product.src.api_stripe import APIStripeMixin
+from product.src.api_stripe import APIStripe
 from product.models import Product, Pay
-from users.models import User
 
 
 class ProductBase(ABC):
@@ -14,20 +13,23 @@ class PaymentBase(ABC):
     pass
 
 
-class UserProduct(APIStripeMixin, ProductBase):
+class UserProduct(ProductBase):
 
     def __init__(self, pk: str = None):
         """
         Класс для работы с продуктом
         :param pk: pk продукта (экземпляра модели Product)
         """
-        super().__init__(self)
+        self.stripe = APIStripe()
         if pk:
             self.product = Product.objects.get(id=pk)
-            self.name = self.product.name
             self.price = self.product.price
             self.currency = self.product.currency
-
+            if self.product.content:
+                self.name = self.product.content.title
+            else:
+                self.name = (f'Месячная подписка на пользователя '
+                             f'{self.product.user.username}')
 
     def create_ids_product(self) -> None:
         """
@@ -39,16 +41,17 @@ class UserProduct(APIStripeMixin, ProductBase):
             price=self.price,
             currency=self.currency
         )
+        print(ids)
 
         self.product.stripe_id = ids['product_id']
-        self.product.stripe_price_id = ids['price_id']
+        self.product.price_stripe_id = ids['price_id']
         self.product.save()
 
 
-class UserPayment(APIStripeMixin, PaymentBase):
+class UserPayment(PaymentBase):
 
     def __init__(self, pk: str = None, user: Any = None):
-        super().__init__(self)
+        self.stripe = APIStripe()
         if pk:
             self.payment = Pay.objects.get(id=pk)
             self.user = self.payment.owner
