@@ -23,7 +23,7 @@ class Content(models.Model):
         verbose_name='изображение', default=None
     )
     date_update = models.DateTimeField(
-        auto_now=True,
+        auto_now_add=True,
         verbose_name='дата последнего обновления'
     )
     start_publish = models.DateTimeField(

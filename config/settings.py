@@ -49,7 +49,8 @@ INSTALLED_APPS = [
 
     'users',
     'content',
-    'subscription'
+    'subscription',
+    'product'
 
 ]
 
@@ -191,4 +192,9 @@ CELERY_BEAT_SCHEDULE = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+# API TouTube settings
 API_YOUTUBE_TOKEN = os.getenv('API_YOUTUBE_TOKEN')
+
+# Stripe API settings
+# https://stripe.com/docs/api
+STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
