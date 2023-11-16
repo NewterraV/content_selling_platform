@@ -25,6 +25,22 @@ class WorkSubscriptionBase(ABC):
         )
         return True
 
+    @staticmethod
+    def subs_status(user: Any, author: str) -> dict:
+        """
+        Запрос возвращает статус подписок пользователя на автора
+        :param user: пользователь
+        :param author: PK автора
+        :return: Словарь со статусом подписки
+        """
+
+        data = {
+            'subs': user.subs.filter(author=author).exists(),
+            'paid_subs': user.paid_subs.filter(author=author).exists(),
+            'src_subs': user.src_subs.filter(owner=user).exists()
+        }
+        return data
+
 
 class WorkSubscription(WorkSubscriptionBase):
     """Класс для работы с бесплатными подписками"""

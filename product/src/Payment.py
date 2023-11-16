@@ -41,7 +41,6 @@ class UserProduct(ProductBase):
             price=self.price,
             currency=self.currency
         )
-        print(ids)
 
         self.product.stripe_id = ids['product_id']
         self.product.price_stripe_id = ids['price_id']
@@ -55,23 +54,43 @@ class UserPayment(PaymentBase):
         if pk:
             self.payment = Pay.objects.get(id=pk)
             self.user = self.payment.owner
+            self.state = self.payment.state
+            self.product = self.payment.product
         else:
+            self.state = None
             self.user = user
+            self.product = None
 
-    def create_payment(self, product_id: str, redirect_url: str) -> str:
+    def create_payment(self, product_id: str, redirect_url: str,
+                       domain: str) -> str:
         """Метод создает запись о платеже и возвращает ссылку на оплату"""
         product = Product.objects.filter(pk=product_id).first()
-
-        response = self.stripe.get_payment_link(redirect_url)
 
         payment = Pay.objects.create(
             owner=self.user,
             product=product,
             payment_amount=product.price,
             payment_currency=product.currency,
-            payment_api_id=response['id'],
-            payment_url=response['url']
+            redirect_url=redirect_url,
         )
         payment.save()
 
+        check_url = f'http://{domain}/product/payment/{payment.pk}/check/'
+
+        response = self.stripe.get_payment_link(check_url,
+                                                product.price_stripe_id)
+
+        payment.payment_api_id = response['id']
+        payment.save()
+
         return response['url']
+
+    def check_payment(self):
+        """Метод проверяет статус платежа и обновляет его в БД"""
+
+        status = self.stripe.get_status(
+            payment_id=self.payment.payment_api_id)
+
+        self.state = status
+        self.payment.state = status
+        self.payment.save()

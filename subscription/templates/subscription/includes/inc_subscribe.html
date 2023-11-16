@@ -1,13 +1,23 @@
 <form action="{% url 'subscription:subscribe' object.owner.pk %}"
       method="GET" id="ajax_subscribe">
     {% csrf_token %}
-    {% if subs_paid %}
+    {% if subs.paid_subs %}
         <p>Платная подписка истечет: </p>
-    {% elif subs %}
-        <input type="submit" class="btn btn-outline-dark" id="subs"
-               value="Отписаться" >
     {% else %}
-        <input type="submit" class="btn btn-outline-dark" id="subs"
-               value="Подписаться">
+        <div class="btn-group dropdown">
+            <button type="button" class="btn btn-secondary dropdown-toggle rounded rounded-5"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                Управление подпиской
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item active"
+                       data-bs-toggle="tooltip" data-bs-placement="top"
+                       title="Платная подписка открывает доступ ко всему контенту пользователя">
+                    Подписаться за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
+                </a></li>
+                {% include 'subscription/includes/inc_subs_button.html' %}
+            </ul>
+        </div>
     {% endif %}
+
 </form>

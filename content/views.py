@@ -7,8 +7,7 @@ from django.views.generic import (
     DetailView,
     DeleteView,
     CreateView,
-    UpdateView,
-    TemplateView
+    UpdateView
 )
 
 from content.forms import VideoForm, ContentForm, ContentUpdateForm
@@ -20,6 +19,7 @@ from product.forms import ProductForm
 from product.models import Product
 from product.tasks import task_create_product, task_delete_product
 from subscription.models import Subscription
+from subscription.src.subscription import WorkSubscription
 
 
 class ContentFormsetMixin:
@@ -29,27 +29,27 @@ class ContentFormsetMixin:
     extra = 1
 
     def get_context_data(self, **kwargs):
-        """Переопределние добавляет формсет содержания рассылки"""
+        """Переопределение добавляет формсет содержания контента"""
 
         context_data = super().get_context_data(**kwargs)
-        content_form = inlineformset_factory(Content, Video,
-                                             form=VideoForm,
-                                             extra=self.extra,
-                                             can_delete=False)
+        video_form = inlineformset_factory(Content, Video,
+                                           form=VideoForm,
+                                           extra=self.extra,
+                                           can_delete=False)
         product_form = inlineformset_factory(Content, Product,
                                              form=ProductForm,
                                              extra=self.extra,
                                              can_delete=False)
         if self.request.method == 'POST':
-            content_formset = content_form(self.request.POST,
-                                           instance=self.object)
+            video_formset = video_form(self.request.POST,
+                                       instance=self.object)
             product_formset = product_form(self.request.POST,
-                                         instance=self.object)
+                                           instance=self.object)
         else:
-            content_formset = content_form(instance=self.object)
+            video_formset = video_form(instance=self.object)
             product_formset = product_form(instance=self.object)
 
-        context_data['content_formset'] = content_formset
+        context_data['video_formset'] = video_formset
         context_data['product_formset'] = product_formset
         return context_data
 
@@ -98,19 +98,31 @@ class ContentDetailView(DetailView):
         """Переопределение метода для формирования необходимого
         дополнительного контекста"""
 
+        # Проверка доступности видео для пользователя
         context = super().get_context_data(**kwargs)
+        if self.object.is_free:
+            context['video'] = self.object.video.video_id
+        else:
+            if self.request.user.is_authenticated:
+                context['subs'] = WorkSubscription.subs_status(
+                    self.request.user,
+                    self.object.owner
+                )
+                if self.request.user == self.object.owner:
+                    context['video'] = self.object.video.video_id
+                elif self.object.is_paid_subs:
+                    if context['subs']['paid_subs']:
+                        context['video'] = self.object.video.video_id
+                elif self.object.is_src_subs:
+                    if context['subs']['src_subs']:
+                        context['video'] = self.object.video.video_id
 
-        context['video'] = self.object.video.url
         context['title'] = self.object.title
         play_list = list(self.model.objects.all().exclude(pk=self.object.pk))
 
         # Отображение 10 рандомных записей
         context['play_list'] = sample(play_list, 10) if len(
             play_list) > 10 else play_list
-        if not self.request.user.is_anonymous:
-            context['subs'] = self.request.user.subs.filter(
-                author=self.object.owner
-            ).exists()
 
         return context
 
@@ -149,18 +161,16 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         обложки видео"""
 
         product_formset = self.get_context_data()['product_formset']
-        content_formset = self.get_context_data()['content_formset']
+        video_formset = self.get_context_data()['video_formset']
 
-        if content_formset.is_valid():
+        if video_formset.is_valid() and product_formset.is_valid():
             form.instance.owner = self.request.user
             self.object = form.save()
             if not self.object.image:
                 task_get_image.delay(pk=self.object.pk)
-            content_formset.instance = self.object
-            content_formset.save()
-
-        if not self.object.is_free:
-            if product_formset.is_valid():
+            video_formset.instance = self.object
+            video_formset.save()
+            if not self.object.is_free:
                 product_formset.instance = self.object
                 product_formset.save()
                 task_create_product.delay(self.object.product.pk)
@@ -210,7 +220,7 @@ class ContentDeleteView(DeleteView):
     def form_valid(self, form):
         """Переопределение для удаления файлов связанных с контентом"""
         if not self.object.is_free:
-            task_delete_product.delay(self.object.product.stripe_id,)
+            task_delete_product.delay(self.object.product.stripe_id, )
         if self.object.image:
             task_delete_img.delay(path_to=str(self.object.image))
         return super().form_valid(form)

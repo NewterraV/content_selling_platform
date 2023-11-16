@@ -22,13 +22,13 @@
                                 просмотров</small></p>
                         </div>
                         <div class="col-3 d-grid gap-1">
-                            <a href="{% url 'content:content_update' content.pk %}" class="btn btn-outline-primary btn-sm">
+                            <a href="{% url 'content:content_update' content.pk %}" class="btn btn-outline-primary btn-sm rounded rounded-5">
                                 Редактировать
                             </a>
-                            <a class="btn btn-outline-primary btn-sm" href="{% url 'content:content_delete' content.pk %}">
+                            <a class="btn btn-outline-primary btn-sm rounded rounded-5" href="{% url 'content:content_delete' content.pk %}">
                                 Скрыть
                             </a>
-                            <a class="btn btn-outline-secondary btn-sm" href="{% url 'content:content_delete' content.pk %}">
+                            <a class="btn btn-outline-secondary btn-sm rounded rounded-5" href="{% url 'content:content_delete' content.pk %}">
                                 Удалить
                             </a>
                         </div>

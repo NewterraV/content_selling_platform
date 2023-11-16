@@ -11,9 +11,8 @@ $(function ($) {
                 btn.val('Отписаться');
             },
             error: function (response) {
-                btn.val('Подписаться');
+                btn.val('Подписаться бесплатно');
             }
         })
-
     })
 })

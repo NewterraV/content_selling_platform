@@ -1,0 +1,24 @@
+{% if content.is_free %}
+    <span class="badge rounded-pill bg-primary">Free</span>
+{% endif %}
+{% if content.is_paid_subs %}
+    <span class="badge rounded-pill bg-danger">Author</span>
+{% endif %}
+{% if content.is_src_subs %}
+    <span class="badge rounded-pill bg-success">Look</span>
+{% endif %}
+<div class="container">
+    <div class="row text-center">
+        {% if object.is_paid_subs %}
+            <a href="{% url 'product:product_payment' object.owner.product_user.pk %}" class="btn btn-danger rounded rounded-4 gy-2">
+                Подписаться на пользователя
+                за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
+            </a>
+        {% endif %}
+        {% if object.is_src_subs %}
+            <a class="btn btn-success rounded rounded-4">
+                Стать участником LOOK
+            </a>
+        {% endif %}
+    </div>
+</div>

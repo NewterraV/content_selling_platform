@@ -23,18 +23,3 @@ def subscribe(request, pk):
     response = WorkSubscription(user=request.user).set_subs(pk=pk)
 
     return HttpResponse(status=201 if response else 500)
-
-
-def subs_status(request, pk):
-    """
-    Запрос возвращает статус подписок пользователя на автора
-    :param request: тело запроса
-    :param pk: PK автора
-    :return: Словарь со статусом подписки
-    """
-
-    data = {
-        'subs': request.user.subs.filter(author=pk),
-        'paid_subs': request.user.paid_subs.filter(author=pk),
-        'src_subs': request.user.src_subs.filter(owner=request.user)
-    }

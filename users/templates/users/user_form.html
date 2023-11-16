@@ -11,6 +11,12 @@
                     {% csrf_token %}
                     {{ form | crispy }}
                 </div>
+                <div class="col-6">
+                    {{ formset.management_form }}
+                    {% for form in formset.forms %}
+                        {{ form | crispy }}
+                    {% endfor %}
+                </div>
             </div>
             <div class="row">
                 <div class="col-auto">

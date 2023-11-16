@@ -91,9 +91,9 @@ class Pay(models.Model):
         **NULLABLE,
         verbose_name='id платежа на платежном сервисе'
     )
-    payment_url = models.URLField(
+    redirect_url = models.URLField(
         **NULLABLE,
-        verbose_name='ссылка на оплату'
+        verbose_name='ссылка на возврат'
     )
     state = models.BooleanField(
         default=False,

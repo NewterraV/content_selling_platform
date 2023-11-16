@@ -35,10 +35,11 @@ class APIStripe(BaseAPI):
         return {'product_id': response['id'],
                 'price_id': response['default_price']}
 
-    def get_payment_link(self, redirect_url: str) -> dict:
+    def get_payment_link(self, redirect_url: str, price_id: str) -> dict:
         """
         Метод генерирует ссылку на оплату продукта
-        :param redirect_url:
+        :param redirect_url: Url перенаправления после успешной оплаты
+        :param price_id: идентификатор цены на сервисе Stripe
         :return:
         """
 
@@ -46,19 +47,19 @@ class APIStripe(BaseAPI):
             'success_url': redirect_url,
             'line_items': [
                 {
-                    'price': self.product.stripe_price_id,
+                    'price': price_id,
                     "quantity": 1
                 }
             ],
             'mode': 'payment'
         }
 
-        stripe.api_key = settings.STRIPE_API_KEY
+        stripe.api_key = self.token
         response = stripe.checkout.Session.create(**params)
 
         return {'id': response['id'], 'url': response['url']}
 
-    def delete_product(self, product_id: str,) ->None:
+    def delete_product(self, product_id: str,) -> None:
         """
         Метод удаляет продукт на стороне сервера stripe
         :param product_id: id продукта stripe
@@ -71,11 +72,10 @@ class APIStripe(BaseAPI):
             active=False,
         )
 
-    # def get_payment_status(self, payment_id):
-    #     """Метод проверяет статус платежа"""
-    #     payment = Pay.objects.get(id=pk)
-    #     stripe.api_key = self.token
-    #     response = stripe.checkout.Session.retrieve(payment.payment_api_id)
-    #     if response["payment_status"] == 'unpaid':
-    #         return False
-    #     return True
+    def get_status(self, payment_id):
+        """Метод проверяет статус платежа"""
+        stripe.api_key = self.token
+        response = stripe.checkout.Session.retrieve(payment_id)
+        if response["payment_status"] == 'unpaid':
+            return False
+        return True

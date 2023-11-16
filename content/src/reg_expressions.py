@@ -11,5 +11,5 @@ class RegExpressions(RegExpressionsBase):
 
         video_id = re.findall(r'(?<=be/).{11}', url)
         if not video_id:
-            video_id = re.findall(r'(?<==).*', url)
+            video_id = re.findall(r'(?<==).{11}', url)
         return video_id[0]

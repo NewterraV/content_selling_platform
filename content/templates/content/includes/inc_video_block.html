@@ -14,6 +14,17 @@
                 </div>
             {% endif %}
         </div>
+        <div class="card-img-overlay">
+                {% if content.is_free %}
+                    <span class="badge rounded-pill bg-primary">Free</span>
+                {% endif %}
+                {% if content.is_paid_subs %}
+                    <span class="badge rounded-pill bg-danger">Author</span>
+                {% endif %}
+                {% if content.is_src_subs %}
+                    <span class="badge rounded-pill bg-success">Look</span>
+                {% endif %}
+        </div>
         <div class="row justify-content-start">
             <div class="col-2 pt-2">
                 <img src="{% mediapath content.owner.avatar %}"
