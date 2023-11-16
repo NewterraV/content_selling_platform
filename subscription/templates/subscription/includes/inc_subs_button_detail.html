@@ -1,24 +1,54 @@
-{% if content.is_free %}
-    <span class="badge rounded-pill bg-primary">Free</span>
-{% endif %}
-{% if content.is_paid_subs %}
-    <span class="badge rounded-pill bg-danger">Author</span>
-{% endif %}
-{% if content.is_src_subs %}
-    <span class="badge rounded-pill bg-success">Look</span>
-{% endif %}
-<div class="container">
-    <div class="row text-center">
-        {% if object.is_paid_subs %}
-            <a href="{% url 'product:product_payment' object.owner.product_user.pk %}" class="btn btn-danger rounded rounded-4 gy-2">
-                Подписаться на пользователя
-                за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
-            </a>
-        {% endif %}
-        {% if object.is_src_subs %}
-            <a class="btn btn-success rounded rounded-4">
-                Стать участником LOOK
-            </a>
-        {% endif %}
+{% load templatetags %}
+{% if video %}
+    <div class="ratio ratio-16x9">
+        <iframe
+                src="https://www.youtube.com/embed/{{ video }}?autoplay=1"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                class="rounded-3">
+        </iframe>
     </div>
-</div>
+{% else %}
+    <div class="ratio ratio-16x9">
+        <div class="card rounded-3 rounded-top">
+            <img src="{% mediapath object.image %}"
+                 class="img-fluid rounded-3 rounded-top"
+                 alt="...">
+            <div class=" flex-column card-img-overlay">
+                {% include 'content/includes/inc_badge.html' %}
+            </div>
+        </div>
+    </div>
+    <div class="card border-white">
+        <div class="card-header border-white h4 text-center">
+            Выбери подписку и смотри
+        </div>
+
+        <div class="card-body text-center">
+        {% if user.is_authenticated %}
+            {% if object.is_paid_subs %}
+                <a href="{% url 'product:product_payment' object.owner.product_user.pk %}"
+                   class="btn btn-danger btn-sm rounded rounded-4 gy-2">
+                    Подписаться
+                    за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
+                </a>
+            {% endif %}
+            {% if object.is_src_subs %}
+                <a class="btn btn-success btn-sm rounded rounded-4">
+                    Стать участником LOOK
+                </a>
+            {% endif %}
+            <a href="{% url 'product:product_payment' object.product.pk %}"
+               class=" btn btn-secondary btn-sm rounded rounded-4">
+                Приобрести видео в коллекцию
+            </a>
+        {% else %}
+            <a href="{% url 'users:login' %}"
+               class=" btn btn-primary rounded rounded-4">
+                Авторизоваться
+            </a>
+        {% endif %}
+        </div>
+    </div>
+{% endif %}

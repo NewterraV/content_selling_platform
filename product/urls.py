@@ -1,18 +1,18 @@
 from django.urls import path
 from product.apps import ProductConfig
-from product.views import ProductView, PaymentView
+from product.views import PaymentCreateView, PaymentCheckView
 
 app_name = ProductConfig.name
 
 urlpatterns = [
     path(
         'payment/<int:pk>/check/',
-        PaymentView.as_view(),
+        PaymentCheckView.as_view(),
         name='payment_check'
     ),
     path(
         'product/<int:pk>/payment',
-        ProductView.as_view(),
+        PaymentCreateView.as_view(),
         name='product_payment'
     ),
 

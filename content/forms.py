@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from content.src.reg_expressions import RegExpressions
 
 from content.models import Content, Video
+from product.models import Product
 
 
 class StyleMixin:
@@ -13,7 +14,44 @@ class StyleMixin:
         self.helper = FormHelper()
 
 
-class ContentForm(StyleMixin, forms.ModelForm):
+class ValidateMixin:
+    """Класс добавляющий методы валидации формам связанным с контентом"""
+
+    def clean_is_paid_subs(self):
+        """Метод валидации поля платной подписки"""
+        cleaned_data = self.cleaned_data.get('is_paid_subs')
+        user_paid = Product.objects.filter(user=self.user)
+        if cleaned_data and not user_paid:
+            raise forms.ValidationError('Невозможно создать видео по подписке'
+                                        ' так как вы не указали цену подписки'
+                                        ' на пользователя при регистрации.'
+                                        'Указать цену можно на странице '
+                                        'редактирования пользователя')
+        return cleaned_data
+
+    def clean(self):
+        cleaned_data = super().clean()
+        is_free = self.cleaned_data.get('is_free')
+        is_paid_subs = self.cleaned_data.get('is_paid_subs')
+        is_src_subs = self.cleaned_data.get('is_src_subs')
+        is_purchase = self.cleaned_data.get('is_purchase')
+        print(is_purchase)
+        print(is_free)
+        if is_free and is_paid_subs:
+            raise forms.ValidationError('Видео не может быть одновременно '
+                                        'бесплатным и по подписке на '
+                                        'пользователя')
+        if is_free and is_src_subs:
+            raise forms.ValidationError('Видео не может быть одновременно '
+                                        'бесплатным и по подписке на сервис')
+        if is_free and is_purchase:
+            raise forms.ValidationError('Видео не может быть одновременно '
+                                        'бесплатным и доступным к покупке в'
+                                        ' коллекцию')
+        return cleaned_data
+
+
+class ContentForm(StyleMixin, ValidateMixin, forms.ModelForm):
     """Класс описывающий форму для создания нового экземпляра контента"""
 
     title = forms.CharField(
@@ -88,13 +126,45 @@ class ContentForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
+    is_purchase = forms.BooleanField(
+
+        label="Контент доступен для покупки в коллекцию",
+        help_text='Установите галочку если контент будет доступен для '
+                  'единовременной покупки. Пользователь получит доступ к '
+                  'контенту навсегда, а вы разовую единовременную оплату.'
+                  'Если поле активно, необходимо казать цену для разовой'
+                  ' покупки',
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        """Переопределение для фильтрации содержимого поля clients"""
+
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Content
         fields = ('title', 'description', 'image', 'start_publish',
-                  'is_publish', 'is_free', 'is_paid_subs', 'is_src_subs')
+                  'is_publish', 'is_free', 'is_paid_subs', 'is_src_subs',
+                  'is_purchase')
+
+    # def clean_is_free(self):
+    #     """Метод валидации поля бесплатной подписки"""
+    #     cleaned_data = self.cleaned_data.get('is_free')
+    #     is_paid_subs = self.cleaned_data.get('is_paid_subs')
+    #     is_src_subs = self.cleaned_data.get('is_src_subs')
+    #     if cleaned_data and is_paid_subs:
+    #         raise forms.ValidationError('Видео не может быть одновременно '
+    #                                     'бесплатным и по подписке на '
+    #                                     'пользователя')
+    #     if cleaned_data and is_src_subs:
+    #         raise forms.ValidationError('Видео не может быть одновременно '
+    #                                     'бесплатным и по подписке на сервис')
+    #     return cleaned_data
 
 
-class ContentUpdateForm(StyleMixin, forms.ModelForm):
+class ContentUpdateForm(StyleMixin, ValidateMixin, forms.ModelForm):
     """Класс описывающий форму для обновления экземпляра контента"""
 
     title = forms.CharField(
@@ -153,10 +223,27 @@ class ContentUpdateForm(StyleMixin, forms.ModelForm):
         required=False,
     )
 
+    is_purchase = forms.BooleanField(
+
+        label="Контент доступен для покупки в коллекцию",
+        help_text='Установите галочку если контент будет доступен для '
+                  'единовременной покупки. Пользователь получит доступ к '
+                  'контенту навсегда, а вы разовую единовременную оплату.'
+                  'Если поле активно, необходимо казать цену для разовой'
+                  ' покупки',
+        required=False,
+    )
+
     class Meta:
         model = Content
         fields = ('title', 'description', 'image',
-                  'is_publish', 'is_free', 'is_paid_subs', 'is_src_subs')
+                  'is_free', 'is_paid_subs', 'is_src_subs', 'is_purchase')
+
+    def __init__(self, *args, **kwargs):
+        """Переопределение для фильтрации содержимого поля clients"""
+
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
 
 
 class VideoForm(StyleMixin, forms.ModelForm):

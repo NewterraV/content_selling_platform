@@ -47,7 +47,7 @@ class Product(models.Model):
     )
 
     price = models.PositiveIntegerField(
-        **NULLABLE,
+        default=49,
         verbose_name='"цена"'
     )
     currency = models.CharField(

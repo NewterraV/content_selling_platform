@@ -47,6 +47,10 @@ class Content(models.Model):
         default=False,
         verbose_name='Контент в подписке на сервис'
     )
+    is_purchase = models.BooleanField(
+        default=False,
+        verbose_name='Доступно для приобретения в коллекцию'
+    )
     view_count = models.PositiveIntegerField(
         default=0,
         verbose_name='Количество просмотров'

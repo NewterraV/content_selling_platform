@@ -5,26 +5,7 @@
     <div class="container">
         <div class="row row-cols-auto">
             <div class="col-md-8">
-                <div class="ratio ratio-16x9">
-                    {% if video %}
-                        <iframe
-                                src="https://www.youtube.com/embed/{{ video }}?autoplay=1"
-                                title="YouTube video player"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen
-                                class="rounded-3">
-                        </iframe>
-                    {% else %}
-                        <div class="card">
-                            <img src="{% mediapath object.image %}"
-                                 class="img-fluid rounded"
-                                 alt="...">
-                            <div class=" flex-column card-img-overlay">
-                                {% include 'subscription/includes/inc_subs_button_detail.html' %}
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
+                {% include 'subscription/includes/inc_subs_button_detail.html' %}
                 <div class="row pt-3">
                     <div class="col-11">
                         <h4 class="gap-3 pt-2">
@@ -72,7 +53,7 @@
                     </p>
                     <div class="collapse" id="collapseExample">
                         <div class="text">
-                            {{ object.description | linebreaksbr }}
+                            {{ object.description | linebreaksbr | urlizetrunc:40 }}
                         </div>
                     </div>
                     <p>
@@ -121,22 +102,29 @@
                 </div>
             </div>
             <div class="col-md-4">
-                {% for item in play_list %}
+                {% for content in play_list %}
                     <div class="mb-1" href=""
                          style="width: 24rem;">
                         <div class="row bg-body position-relative">
                             <div class="col-md-5 ratio ratio-16x9">
-                                <img src="{% mediapath item.image %}"
+                                <img src="{% mediapath content.image %}"
                                      class="img-fluid rounded"
                                      alt="...">
                             </div>
+                            <div class=" flex-column card-img-overlay">
+                                {% if content.is_free %}
+                                    <span class="badge rounded-pill bg-primary">Free</span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-success">Paid</span>
+                                {% endif %}
+                            </div>
                             <div class="col-md-7">
-                                <p class="card-title fw-bold ">{{ item.title|truncatechars:40 }}</p>
-                                <small class="fw-light">{{ item.owner.username }}</small>
+                                <p class="card-title fw-bold ">{{ content.title|truncatechars:40 }}</p>
+                                <small class="fw-light">{{ content.owner.username }}</small>
                                 <p><small
-                                        class="fw-light">{{ item.view_count }}
+                                        class="fw-light">{{ content.view_count }}
                                     просмотров</small></p>
-                                <a href="{% url 'content:content_detail' item.pk %}"
+                                <a href="{% url 'content:content_detail' content.pk %}"
                                    class="stretched-link"></a>
                             </div>
                         </div>

@@ -37,7 +37,7 @@ class WorkSubscriptionBase(ABC):
         data = {
             'subs': user.subs.filter(author=author).exists(),
             'paid_subs': user.paid_subs.filter(author=author).exists(),
-            'src_subs': user.src_subs.filter(owner=user).exists()
+            'src_subs': user.src_subs.filter(owner=user).exists(),
         }
         return data
 

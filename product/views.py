@@ -1,18 +1,20 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
-from django.template.loader import render_to_string
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from product.models import Product, Pay
 from product.src.Payment import UserProduct, UserPayment
+from subscription.models import PermanentPurchase
 from subscription.src.subscription import WorkPaidSubscription
 
 
-class ProductView(TemplateView):
+class PaymentCreateView(LoginRequiredMixin, TemplateView):
     template_name = 'product:product_payment'
     extra_context = {
         'title': 'Оплата'
     }
+    login_url = 'users:login'
 
     def get(self, request, *args, **kwargs):
         current_site = get_current_site(request)
@@ -25,11 +27,12 @@ class ProductView(TemplateView):
         return redirect(payment_url)
 
 
-class PaymentView(TemplateView):
+class PaymentCheckView(LoginRequiredMixin, TemplateView):
     template_name = 'product:product_payment'
     extra_context = {
         'title': 'Оплата'
     }
+    login_url = 'users:login'
 
     def get(self, request, *args, **kwargs):
 
@@ -41,6 +44,10 @@ class PaymentView(TemplateView):
                 WorkPaidSubscription(user=self.request.user).set_subs(
                     obj.product.user.pk)
             elif obj.product.content:
-                pass
+                purchase = PermanentPurchase.objects.create(
+                    owner=self.request.user,
+                    content=obj.product.content
+                )
+                purchase.save()
 
         return redirect(obj.payment.redirect_url)
