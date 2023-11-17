@@ -6,9 +6,9 @@ from users.models import NULLABLE, User
 
 
 class Currency(models.TextChoices):
-    RUB = 'rub', '₽ - рубли'
-    USD = 'usd', '$ - доллары'
-    EUR = 'eur', '€ - евро'
+    RUB = 'rub', '₽'
+    USD = 'usd', '$'
+    EUR = 'eur', '€'
 
 
 class Product(models.Model):

@@ -5,8 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from product.models import Product, Pay
 from product.src.Payment import UserProduct, UserPayment
-from subscription.models import PermanentPurchase
-from subscription.src.subscription import WorkPaidSubscription
+from subscription.models import PermanentPurchase, Subscription
+from subscription.src.subscription import WorkPaidSubscription, \
+    WorkSubscription
 
 
 class PaymentCreateView(LoginRequiredMixin, TemplateView):
@@ -28,6 +29,7 @@ class PaymentCreateView(LoginRequiredMixin, TemplateView):
 
 
 class PaymentCheckView(LoginRequiredMixin, TemplateView):
+    """Представление проверки оплаты пользователя"""
     template_name = 'product:product_payment'
     extra_context = {
         'title': 'Оплата'
@@ -38,11 +40,15 @@ class PaymentCheckView(LoginRequiredMixin, TemplateView):
 
         obj = UserPayment(self.kwargs.get('pk'))
         obj.check_payment()
-        print(obj.state)
         if obj.state:
             if obj.product.user:
                 WorkPaidSubscription(user=self.request.user).set_subs(
                     obj.product.user.pk)
+                if not Subscription.objects.filter(
+                        owner=self.request.user,
+                        author=obj.product.user).first():
+                    WorkSubscription(user=self.request.user).set_subs(
+                        obj.product.user.pk)
             elif obj.product.content:
                 purchase = PermanentPurchase.objects.create(
                     owner=self.request.user,

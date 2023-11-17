@@ -1,14 +1,17 @@
 from django.contrib.auth.views import LoginView as BaseLoginView, \
     LogoutView as BaselogoutView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, TemplateView
 from django.forms import inlineformset_factory
+from django.db.models import Sum
 
+from content.models import Content
 from product.forms import UserProductForm
 from product.models import Product
+from subscription.models import Subscription
+from subscription.src.subscription import WorkSubscription
 from users.forms import RegisterForm, LoginForm, UserUpdateForm
 from users.models import User
-from product.tasks import task_create_product
 
 
 class UserFormsetMixin:
@@ -30,6 +33,48 @@ class UserFormsetMixin:
             formset = formset(instance=self.object)
 
         context_data['formset'] = formset
+        return context_data
+
+
+class UserDetailView(TemplateView):
+    """Представление детальной информации о пользователе"""
+    template_name = 'users/user_detail.html'
+
+    def get_context_data(self, **kwargs):
+        """Переопределение для вывода дополнительного контекста"""
+
+        context_data = super().get_context_data(**kwargs)
+
+        # Получаем основной объект
+        author = User.objects.get(pk=self.kwargs.get('pk'))
+        context_data['author'] = author
+
+        # Получаем контент автора
+        context_data['content_list'] = Content.objects.filter(
+            owner=author, is_publish=True).order_by('-date_update')
+
+        # Собираем сопутствующий контент
+        product = Product.objects.filter(user=author).first()
+        sub = {
+            'subs_count': Subscription.objects.filter(
+                author=author).count(),
+            'view_count': Content.objects.values('view_count').filter(
+                owner=author, is_publish=True).aggregate(
+                Sum('view_count'))['view_count__sum'],
+            'video_count': len(context_data['content_list']),
+            'paid_subs_price': product.price if product else None,
+            'paid_subs_currency':
+                product.get_currency_display() if product else None,
+            'paid_subs_pk': product.pk if product else None
+        }
+        context_data['sub'] = sub
+
+        # проверяем подписки пользователя
+        if self.request.user.is_authenticated:
+            context_data['subs'] = WorkSubscription.subs_status(
+                        self.request.user,
+                        author,
+                    )
         return context_data
 
 

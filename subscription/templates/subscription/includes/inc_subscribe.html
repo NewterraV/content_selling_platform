@@ -7,22 +7,13 @@
     {% elif user.pk == object.owner.pk %}
         <span class="badge rounded-pill bg-primary">Вы владелец</span>
     {% else %}
-        <div class="btn-group dropdown">
-            <button type="button"
-                    class="btn btn-secondary dropdown-toggle rounded rounded-5"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                Управление подпиской
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item active"
-                       data-bs-toggle="tooltip" data-bs-placement="top"
-                       title="Платная подписка открывает доступ ко всему контенту пользователя">
-                    Подписаться
-                    за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
-                </a></li>
-                {% include 'subscription/includes/inc_subs_button.html' %}
-            </ul>
-        </div>
+        {% include 'subscription/includes/inc_subs_button.html' %}
+        {% if sub.paid_subs_price %}
+            <a class="btn btn-sm btn-danger rounded rounded-4"
+               href="{% url 'product:product_payment' sub.paid_subs_pk %}">Подписаться
+                за
+                {{ sub.paid_subs_price }}{{ sub.paid_subs_currency }}</a>
+        {% endif %}
     {% endif %}
 
 </form>

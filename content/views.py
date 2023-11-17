@@ -126,33 +126,59 @@ class ContentDetailView(DetailView):
         дополнительного контекста"""
 
         context = super().get_context_data(**kwargs)
+        # Сборка дополнительного контента для страницы
+        if self.request.user.is_authenticated:
+            # Проверка подписок пользователя
+            context['subs'] = WorkSubscription.subs_status(
+                self.request.user,
+                self.object.owner,
+            )
+            # проверка вхождения текущего видео в купленные пользователем
+            context['subs'][
+                'purchase'] = self.request.user.purchases.filter(
+                content=self.object)
+            # проверка подписки пользователя на владельца видео
+            owner_paid_subs = Product.objects.filter(
+                user=self.object.owner).first()
+            # Сборка сопровождающей информации
+            sub = {
+                'subs_count': Subscription.objects.filter(
+                    author=self.object.owner).count(),
+                'paid_subs_price':
+                    owner_paid_subs.price if owner_paid_subs else None,
+                'paid_subs_currency':
+                    (owner_paid_subs.get_currency_display()
+                     if owner_paid_subs else None),
+                'paid_subs_pk': owner_paid_subs.pk if owner_paid_subs else None
+            }
+            context['sub'] = sub
 
         # Проверка доступности видео для пользователя
         if self.object.is_free:
             context['video'] = self.object.video.video_id
         else:
             if self.request.user.is_authenticated:
-                context['subs'] = WorkSubscription.subs_status(
-                    self.request.user,
-                    self.object.owner,
-                )
-                context['subs'][
-                    'purchase'] = self.request.user.purchases.filter(
-                    content=self.object)
+                # проверка на владельца
                 if self.request.user == self.object.owner:
                     context['video'] = self.object.video.video_id
+                # проверка доступности в подписке на сервис (в разработке)
                 elif self.object.is_src_subs and context['subs']['src_subs']:
                     context['video'] = self.object.video.video_id
+                # проверка доступности в подписках пользователя
                 elif (self.object.is_paid_subs
                       and context['subs']['paid_subs']):
                     context['video'] = self.object.video.video_id
+                # проверка вхождения текущего видео в купленные пользователем
                 elif context['subs']['purchase']:
                     context['video'] = self.object.video.video_id
+                print(context['sub'])
 
         context['title'] = self.object.title
-        play_list = list(self.model.objects.all().exclude(pk=self.object.pk))
+        # Сборка списка видео
+        play_list = list(self.model.objects.filter(is_publish=True).exclude(
+            pk=self.object.pk))
 
-        # Отображение 10 рандомных записей
+        # Отображение 10 рандомных записей в предложенных
         context['play_list'] = sample(play_list, 10) if len(
             play_list) > 10 else play_list
 

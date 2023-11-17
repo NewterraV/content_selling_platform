@@ -27,7 +27,7 @@
                              alt="..."
                              width="40"
                              height="40" class="rounded-circle">
-                        <a href="#" class="stretched-link"></a>
+                        <a href="{%  url 'users:user_detail' object.owner.pk %}" class="stretched-link"></a>
                     </div>
                     <div class="col-3">
                         <div class="row g-0 bg-body position-relative">
@@ -35,7 +35,7 @@
                             <small class="fw-lighter">Количество
                                 подписчиков
                             </small>
-                            <a href="#" class="stretched-link"></a>
+                            <a href="{%  url 'users:user_detail' object.owner.pk %}" class="stretched-link"></a>
                         </div>
                     </div>
                     <div class="col-auto d-md-block">
