@@ -13,6 +13,9 @@
                                  alt="...">
                             <a href="{% url 'content:content_detail' content.pk %}"
                                class="stretched-link"></a>
+                            <div class=" flex-column card-img-overlay">
+                                {% include 'content/includes/inc_badge.html' %}
+                            </div>
                         </div>
                         <div class="col-5">
                             <p class="card-title fw-bold ">{{ content.title|truncatechars:40 }}</p>
@@ -22,13 +25,16 @@
                                 просмотров</small></p>
                         </div>
                         <div class="col-3 d-grid gap-1">
-                            <a href="{% url 'content:content_update' content.pk %}" class="btn btn-outline-primary btn-sm rounded rounded-5">
+                            <a href="{% url 'content:content_update' content.pk %}"
+                               class="btn btn-outline-primary btn-sm rounded rounded-5">
                                 Редактировать
                             </a>
-                            <a class="btn btn-outline-primary btn-sm rounded rounded-5" href="{% url 'content:content_delete' content.pk %}">
+                            <a class="btn btn-outline-primary btn-sm rounded rounded-5"
+                               href="{% url 'content:content_delete' content.pk %}">
                                 Скрыть
                             </a>
-                            <a class="btn btn-outline-secondary btn-sm rounded rounded-5" href="{% url 'content:content_delete' content.pk %}">
+                            <a class="btn btn-outline-secondary btn-sm rounded rounded-5"
+                               href="{% url 'content:content_delete' content.pk %}">
                                 Удалить
                             </a>
                         </div>

@@ -25,6 +25,7 @@ class UserProduct(ProductBase):
             self.product = Product.objects.get(id=pk)
             self.price = self.product.price
             self.currency = self.product.currency
+            self.product_id = self.product.stripe_id
             if self.product.content:
                 self.name = self.product.content.title
             else:
@@ -45,6 +46,13 @@ class UserProduct(ProductBase):
         self.product.stripe_id = ids['product_id']
         self.product.price_stripe_id = ids['price_id']
         self.product.save()
+
+    def update_product(self):
+        """Метод обновляет продукт"""
+
+        APIStripe().delete_product(self.product_id)
+        self.create_ids_product()
+
 
 
 class UserPayment(PaymentBase):

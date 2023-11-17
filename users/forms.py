@@ -1,7 +1,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import MultiWidgetField, Field, Layout, Div
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, \
-    UsernameField
+    UsernameField, UserChangeForm
 from django import forms
 
 from content.forms import StyleMixin
@@ -44,6 +44,24 @@ class RegisterForm(StyleMixin, UserCreationForm):
             'first_name',
             'last_name',
             'birthday',
+            'avatar',
+        )
+
+
+class UserUpdateForm(StyleMixin, UserChangeForm):
+    """Форма для обновления профиля пользователя"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password'].widget = forms.HiddenInput()
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'username',
+            'first_name',
+            'last_name',
             'avatar',
         )
 

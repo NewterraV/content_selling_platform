@@ -59,18 +59,33 @@ class APIStripe(BaseAPI):
 
         return {'id': response['id'], 'url': response['url']}
 
-    def delete_product(self, product_id: str,) -> None:
+    def delete_product(self, product_id: str, ) -> None:
         """
         Метод удаляет продукт на стороне сервера stripe
         :param product_id: id продукта stripe
         :return: None
         """
+        if product_id:
+            stripe.api_key = self.token
+            stripe.Product.modify(
+                product_id,
+                active=False,
+            )
 
-        stripe.api_key = self.token
-        stripe.Product.modify(
-            product_id,
-            active=False,
-        )
+    # def update_(self, price_id: str, price: str, currency: str) -> None:
+    #     """
+    #     Метод обновляет цену на стороне сервера stripe
+    #     :param price_id: id цены stripe
+    #     :param price: Новая цена
+    #     :param currency: Валюта
+    #     :return:
+    #     """
+    #     stripe.api_key = self.token
+    #     stripe.Price.modify(
+    #         price_id,
+    #         unit_amount=price,
+    #         currency=currency,
+    #     )
 
     def get_status(self, payment_id):
         """Метод проверяет статус платежа"""

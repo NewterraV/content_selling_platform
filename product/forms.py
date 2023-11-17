@@ -1,10 +1,33 @@
 from django import forms
 
 from product.models import Product
-from product.tasks import task_create_product
+from product.tasks import task_create_product, task_delete_product, \
+    task_update_product
 
 
-class ProductForm(forms.ModelForm):
+class ProductFormMixin:
+    """Класс для обновления методов форм продукта"""
+
+    def save(self, commit=True):
+        """Переопределение для обновления продукта в зависимости от
+        исходного состояния"""
+        if Product.objects.filter(pk=self.instance.pk).first():
+            if self.instance.price:
+                self.instance.save()
+                task_update_product.delay(self.instance.pk)
+                return self.instance
+            else:
+                task_delete_product.delay(self.instance.stripe_id)
+                self.instance.delete()
+                return self.instance
+
+        if self.instance.price:
+            self.instance.save()
+            task_create_product.delay(self.instance.pk)
+        return self.instance
+
+
+class ProductForm(ProductFormMixin, forms.ModelForm):
     price = forms.IntegerField(
         label="Цена пожизненной покупки доступа к контенту",
         widget=forms.TextInput(
@@ -46,12 +69,12 @@ class ProductForm(forms.ModelForm):
         fields = ('price', 'currency')
 
 
-class UserProductForm(forms.ModelForm):
+class UserProductForm(ProductFormMixin, forms.ModelForm):
     price = forms.IntegerField(
         label="Цена подписки на пользователя",
         widget=forms.TextInput(
             attrs={
-                'placeholder': "100"},
+                'placeholder': "99"},
         ),
         help_text='Введите цену на подписку. '
                   'Если вы не планируете размещать платный контент, '
@@ -60,12 +83,6 @@ class UserProductForm(forms.ModelForm):
                   'профиля',
         required=False,
     )
-
-    def save(self, commit=True):
-        if self.instance.price:
-            self.instance.save()
-            task_create_product.delay(self.instance.pk)
-        return self.instance
 
     class Meta:
         model = Product
