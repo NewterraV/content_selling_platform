@@ -2,10 +2,14 @@
       method="GET" id="ajax_subscribe">
     {% csrf_token %}
     {% if subs.paid_subs %}
-        <p>Платная подписка истечет: </p>
+        <span class="badge rounded-pill bg-primary">Платная подписка истечет
+        </span>
+    {% elif user.pk == object.owner.pk %}
+        <span class="badge rounded-pill bg-primary">Вы владелец</span>
     {% else %}
         <div class="btn-group dropdown">
-            <button type="button" class="btn btn-secondary dropdown-toggle rounded rounded-5"
+            <button type="button"
+                    class="btn btn-secondary dropdown-toggle rounded rounded-5"
                     data-bs-toggle="dropdown" aria-expanded="false">
                 Управление подпиской
             </button>
@@ -13,7 +17,8 @@
                 <li><a class="dropdown-item active"
                        data-bs-toggle="tooltip" data-bs-placement="top"
                        title="Платная подписка открывает доступ ко всему контенту пользователя">
-                    Подписаться за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
+                    Подписаться
+                    за {{ object.owner.product_user.price }} {{ object.owner.product_user.currency }}.
                 </a></li>
                 {% include 'subscription/includes/inc_subs_button.html' %}
             </ul>

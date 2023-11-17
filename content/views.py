@@ -12,14 +12,14 @@ from django.views.generic import (
 
 from content.forms import VideoForm, ContentForm, ContentUpdateForm
 from content.models import Content, Video
-from random import sample
+from random import sample, shuffle
 from django.shortcuts import redirect
 
 from content.tasks import task_get_image, task_delete_img
 from product.forms import ProductForm
 from product.models import Product
 from product.tasks import task_create_product, task_delete_product
-from subscription.models import Subscription
+from subscription.models import Subscription, PaidSubscription
 from subscription.src.subscription import WorkSubscription
 
 
@@ -62,24 +62,50 @@ class IndexView(ListView):
     template_name = 'content/index.html'
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(is_publish=True)[:12]
+        if self.request.user.is_authenticated:
+            queryset = super().get_queryset().exclude(
+                owner=self.request.user).filter(
+                is_publish=True, is_free=True)[:12]
+        else:
+            queryset = super().get_queryset().filter(
+                is_publish=True, is_free=True)[:12]
+
         return queryset
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data['title'] = 'NewTerra'
 
-        if not self.request.user.is_anonymous:
-            subs_author = [obj.author for obj in
+        if self.request.user.is_authenticated:
+            subs_author = [obj.author.pk for obj in
                            Subscription.objects.filter(
                                owner=self.request.user)]
+
+            subs_content = list(
+                self.model.objects.exclude(
+                    owner=self.request.user).filter(owner__in=subs_author,
+                                                    is_publish=True).order_by(
+                    '-date_update')) if subs_author else None
+
+            paid_subs_author = [obj.author.pk for obj in
+                                PaidSubscription.objects.filter(
+                                    owner=self.request.user)]
+
             subs_paid_content = list(
-                self.model.objects.filter(Q(owner__in=subs_author)).order_by(
+                self.model.objects.filter(
+                    owner__in=paid_subs_author,
+                    is_publish=True).order_by(
                     '-date_update')) if subs_author else None
 
             purchased = list(
-                self.model.objects.filter(is_publish=True).order_by(
-                    '-date_update'))
+                self.model.objects.filter(purchases__owner=self.request.user,
+                                          is_publish=True))
+            if subs_content:
+                free_set = set(list(
+                    context_data['object_list']) + subs_content[:12])
+                free_list = list(free_set)
+                shuffle(free_list)
+                context_data['object_list'] = free_list
             if subs_paid_content:
                 context_data['subs_paid_content'] = subs_paid_content[:8]
             if purchased:
