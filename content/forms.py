@@ -35,8 +35,6 @@ class ValidateMixin:
         is_paid_subs = self.cleaned_data.get('is_paid_subs')
         is_src_subs = self.cleaned_data.get('is_src_subs')
         is_purchase = self.cleaned_data.get('is_purchase')
-        print(is_purchase)
-        print(is_free)
         if is_free and is_paid_subs:
             raise forms.ValidationError('Видео не может быть одновременно '
                                         'бесплатным и по подписке на '

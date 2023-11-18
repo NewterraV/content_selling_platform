@@ -54,7 +54,6 @@ class UserProduct(ProductBase):
         self.create_ids_product()
 
 
-
 class UserPayment(PaymentBase):
 
     def __init__(self, pk: str = None, user: Any = None):

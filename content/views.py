@@ -1,7 +1,7 @@
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
-from django.db.models import Q
+from django.http import Http404
 from django.views.generic import (
     ListView,
     DetailView,
@@ -62,6 +62,7 @@ class IndexView(ListView):
     template_name = 'content/index.html'
 
     def get_queryset(self):
+        """Переопределение для сбора ограниченного количества видео"""
         if self.request.user.is_authenticated:
             queryset = super().get_queryset().exclude(
                 owner=self.request.user).filter(
@@ -73,6 +74,8 @@ class IndexView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        """Переопределение для расширения контекста домашней страницы"""
+
         context_data = super().get_context_data(**kwargs)
         context_data['title'] = 'NewTerra'
 
@@ -149,7 +152,8 @@ class ContentDetailView(DetailView):
                 'paid_subs_currency':
                     (owner_paid_subs.get_currency_display()
                      if owner_paid_subs else None),
-                'paid_subs_pk': owner_paid_subs.pk if owner_paid_subs else None
+                'paid_subs_pk':
+                    owner_paid_subs.pk if owner_paid_subs else None
             }
             context['sub'] = sub
 
@@ -204,10 +208,10 @@ class ContentListView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class ContentCreateView(ContentFormsetMixin, CreateView):
+class ContentCreateView(LoginRequiredMixin, ContentFormsetMixin, CreateView):
     model = Content
     form_class = ContentForm
-
+    login_url = 'users:login'
     extra_context = {
         'title': 'Создание контента'
     }
@@ -230,10 +234,12 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         if video_formset.is_valid():
             form.instance.owner = self.request.user
             self.object = form.save()
+
             if not self.object.image:
                 task_get_image.delay(pk=self.object.pk)
             video_formset.instance = self.object
             video_formset.save()
+
             if self.object.is_purchase:
                 if product_formset.is_valid():
                     product_formset.instance = self.object
@@ -243,10 +249,10 @@ class ContentCreateView(ContentFormsetMixin, CreateView):
         return super().form_valid(form)
 
 
-class ContentUpdateView(UpdateView):
+class ContentUpdateView(LoginRequiredMixin, UpdateView):
     model = Content
     form_class = ContentUpdateForm
-
+    login_url = 'users:login'
     extra_context = {
         'title': 'Обновление контента'
     }
@@ -303,19 +309,22 @@ class ContentUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class ContentDeleteView(DeleteView):
+class ContentDeleteView(LoginRequiredMixin, DeleteView):
     """Представление для удаления контента"""
 
     model = Content
     success_url = reverse_lazy('content:content_list')
+    login_url = 'users:login'
     extra_context = {
         'title': 'Подтверждение удаления'
     }
 
     def form_valid(self, form):
         """Переопределение для удаления файлов связанных с контентом"""
-        if self.object.is_purchase:
-            task_delete_product.delay(self.object.product.stripe_id)
-        if self.object.image:
-            task_delete_img.delay(path_to=str(self.object.image))
-        return super().form_valid(form)
+        if self.request.user == self.object.owner:
+            if self.object.is_purchase:
+                task_delete_product.delay(self.object.product.stripe_id)
+            if self.object.image:
+                task_delete_img.delay(path_to=str(self.object.image))
+            return super().form_valid(form)
+        raise Http404('Вы не являетесь владельцем данного контента')

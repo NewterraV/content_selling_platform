@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseNotModified
 
@@ -8,7 +10,7 @@ from subscription.src.subscription import WorkSubscription
 from users.models import User
 
 
-def subscribe(request, pk):
+def subscribe(request: Any, pk: str) -> Any:
     """
     Представление функции активации/деактивации подписки на обновления автора
     Args:
