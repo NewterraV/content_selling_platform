@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from crispy_forms.helper import FormHelper
 from content.src.reg_expressions import RegExpressions
@@ -30,11 +32,19 @@ class ValidateMixin:
         return cleaned_data
 
     def clean(self):
+        """Переопределение для проверки указания доступности контента"""
+
         cleaned_data = super().clean()
         is_free = self.cleaned_data.get('is_free')
         is_paid_subs = self.cleaned_data.get('is_paid_subs')
         is_src_subs = self.cleaned_data.get('is_src_subs')
         is_purchase = self.cleaned_data.get('is_purchase')
+
+        if True not in [is_free, is_paid_subs, is_src_subs, is_purchase]:
+            raise forms.ValidationError('Укажите минимум один параметр '
+                                        'доступности видео: бесплатно, по '
+                                        'подписке, по подписке на сервис, '
+                                        'по разовой покупке')
         if is_free and is_paid_subs:
             raise forms.ValidationError('Видео не может быть одновременно '
                                         'бесплатным и по подписке на '
@@ -147,20 +157,6 @@ class ContentForm(StyleMixin, ValidateMixin, forms.ModelForm):
                   'is_publish', 'is_free', 'is_paid_subs', 'is_src_subs',
                   'is_purchase')
 
-    # def clean_is_free(self):
-    #     """Метод валидации поля бесплатной подписки"""
-    #     cleaned_data = self.cleaned_data.get('is_free')
-    #     is_paid_subs = self.cleaned_data.get('is_paid_subs')
-    #     is_src_subs = self.cleaned_data.get('is_src_subs')
-    #     if cleaned_data and is_paid_subs:
-    #         raise forms.ValidationError('Видео не может быть одновременно '
-    #                                     'бесплатным и по подписке на '
-    #                                     'пользователя')
-    #     if cleaned_data and is_src_subs:
-    #         raise forms.ValidationError('Видео не может быть одновременно '
-    #                                     'бесплатным и по подписке на сервис')
-    #     return cleaned_data
-
 
 class ContentUpdateForm(StyleMixin, ValidateMixin, forms.ModelForm):
     """Класс описывающий форму для обновления экземпляра контента"""
@@ -245,6 +241,7 @@ class ContentUpdateForm(StyleMixin, ValidateMixin, forms.ModelForm):
 
 
 class VideoForm(StyleMixin, forms.ModelForm):
+    """Форма описывающая видео"""
     url = forms.URLField(
         help_text="Ссылка на видео размещенное на видеохостинге YouTube."
                   "Ссылки на другой видеохостинг работать не будут. ",
@@ -253,7 +250,6 @@ class VideoForm(StyleMixin, forms.ModelForm):
                 'placeholder': "https://www.youtube.com/..."},
         ),
         max_length=150,
-        required=True,
     )
 
     def save(self, commit=True):
@@ -264,6 +260,21 @@ class VideoForm(StyleMixin, forms.ModelForm):
             RegExpressions.get_video_id(self.cleaned_data['url']))
         self.instance.save()
         return self.instance
+
+    def clean_url(self):
+        """Метод валидации поля платной подписки"""
+        cleaned_data = self.cleaned_data.get('url')
+        if cleaned_data:
+            if not bool(re.match(r'https://www.youtube', cleaned_data)):
+                raise forms.ValidationError(
+                    'Допускается использование видео только'
+                    ' с хостинга "YouTube"')
+
+            return cleaned_data
+
+        else:
+            raise forms.ValidationError(
+                'Кажется вы забыли указать ссылку на видео')
 
     class Meta:
         model = Video

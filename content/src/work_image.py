@@ -5,7 +5,7 @@ from config import settings
 
 
 class WorkImage:
-
+    """Класс для работы с изображениями проекта"""
     def __init__(self):
         self.media_path = settings.MEDIA_ROOT
 

@@ -11,6 +11,8 @@ from subscription.src.subscription import WorkPaidSubscription, \
 
 
 class PaymentCreateView(LoginRequiredMixin, TemplateView):
+    """Представление перенаправления пользователя на страницу оплаты"""
+
     template_name = 'product:product_payment'
     extra_context = {
         'title': 'Оплата'
@@ -18,6 +20,9 @@ class PaymentCreateView(LoginRequiredMixin, TemplateView):
     login_url = 'users:login'
 
     def get(self, request, *args, **kwargs):
+        """Переопределение для получения ссылки на оплаты и перенаправления
+        пользователя на страницу оплаты"""
+
         current_site = get_current_site(request)
         redirect_url = request.META.get('HTTP_REFERER')
         payment_url = UserPayment(user=request.user).create_payment(
@@ -30,6 +35,7 @@ class PaymentCreateView(LoginRequiredMixin, TemplateView):
 
 class PaymentCheckView(LoginRequiredMixin, TemplateView):
     """Представление проверки оплаты пользователя"""
+
     template_name = 'product:product_payment'
     extra_context = {
         'title': 'Оплата'
@@ -37,6 +43,8 @@ class PaymentCheckView(LoginRequiredMixin, TemplateView):
     login_url = 'users:login'
 
     def get(self, request, *args, **kwargs):
+        """Переопределение для определения типа продукта и его
+        добавления пользователю."""
 
         obj = UserPayment(self.kwargs.get('pk'))
         obj.check_payment()

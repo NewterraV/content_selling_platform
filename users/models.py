@@ -3,7 +3,6 @@ from random import randint
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from users.services import user_directory_path
 
 
 NULLABLE = {
@@ -13,11 +12,32 @@ NULLABLE = {
 
 
 class UserRoles(models.TextChoices):
-    MEMBER = 'member', 'member'
-    MODERATOR = 'moderator', 'moderator'
+    MEMBER = 'member', 'пользователь'
+    MODERATOR = 'moderator', 'модератор'
 
 
 class User(AbstractUser):
+    """
+    Модель пользователя
+
+    Related:
+        - content - to model Content
+
+        - subs - to model Subscription field owner
+        - subscribers - to model Subscription field author
+
+        - paid_subs - to model PaidSubscription field owner
+        - paid_subscribers - to model PaidSubscription field author
+
+        - src_subs - to model ServiceSubscription field owner
+
+        - purchases - to model PermanentPurchase
+
+        - product_user - to model Product
+
+        - pay - to model Pay
+
+    """
 
     phone = models.CharField(
         max_length=10,

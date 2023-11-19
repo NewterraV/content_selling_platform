@@ -72,21 +72,6 @@ class APIStripe(BaseAPI):
                 active=False,
             )
 
-    # def update_(self, price_id: str, price: str, currency: str) -> None:
-    #     """
-    #     Метод обновляет цену на стороне сервера stripe
-    #     :param price_id: id цены stripe
-    #     :param price: Новая цена
-    #     :param currency: Валюта
-    #     :return:
-    #     """
-    #     stripe.api_key = self.token
-    #     stripe.Price.modify(
-    #         price_id,
-    #         unit_amount=price,
-    #         currency=currency,
-    #     )
-
     def get_status(self, payment_id):
         """Метод проверяет статус платежа"""
         stripe.api_key = self.token

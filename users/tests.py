@@ -2,7 +2,6 @@ from django.test import TestCase
 
 from content.models import Content
 from content.tests import TestMixin
-from users.models import User
 
 
 class TestUser(TestMixin, TestCase):

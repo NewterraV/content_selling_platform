@@ -1,13 +1,8 @@
 from typing import Any
-
-from django.urls import reverse
 from django.http import HttpResponse, HttpResponseNotModified
-
 from django.shortcuts import render, redirect
 
-from subscription.models import Subscription
 from subscription.src.subscription import WorkSubscription
-from users.models import User
 
 
 def subscribe(request: Any, pk: str) -> Any:

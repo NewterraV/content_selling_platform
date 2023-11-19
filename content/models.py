@@ -8,6 +8,11 @@ from users.services import user_directory_path_content
 class Content(models.Model):
     """
     Модель описывающая запись пользователя
+
+    Related:
+        - product - to model Product
+        - purchases - to model PermanentPurchase
+
     """
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -56,6 +61,9 @@ class Content(models.Model):
         verbose_name='Количество просмотров'
     )
 
+    def __str__(self):
+        return f'{self.title}-{self.owner}'
+
 
 class Video(models.Model):
     """Модель описывающая видео"""
@@ -68,3 +76,6 @@ class Video(models.Model):
     url = models.URLField(verbose_name='ссылка на видео')
     video_id = models.CharField(max_length=150, verbose_name='ID видео',
                                 **NULLABLE)
+
+    def __str__(self):
+        return f'video to {self.content}'

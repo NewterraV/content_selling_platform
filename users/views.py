@@ -35,6 +35,20 @@ class UserFormsetMixin:
         context_data['formset'] = formset
         return context_data
 
+    def form_valid(self, form):
+        """Переопределнние для валидации и сохранения формсета"""
+
+        formset = self.get_context_data()['formset']
+
+        if not formset.is_valid():
+            return self.form_invalid(form)
+
+        self.object = form.save()
+        formset.instance = self.object
+        formset.save()
+
+        return super().form_valid(form)
+
 
 class UserDetailView(TemplateView):
     """Представление детальной информации о пользователе"""
@@ -79,18 +93,11 @@ class UserDetailView(TemplateView):
 
 
 class UserRegisterView(UserFormsetMixin, CreateView):
+    """Представление регистрации пользователя"""
     model = User
     form_class = RegisterForm
 
     success_url = reverse_lazy('content:content_list')
-
-    def form_valid(self, form):
-        formset = self.get_context_data()['formset']
-        if formset.is_valid():
-            self.object = form.save()
-            formset.instance = self.object
-            formset.save()
-        return super().form_valid(form)
 
 
 class UserUpdateView(UserFormsetMixin, UpdateView):
@@ -103,15 +110,6 @@ class UserUpdateView(UserFormsetMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
-
-    def form_valid(self, form):
-        formset = self.get_context_data()['formset']
-        if formset.is_valid():
-            self.object = form.save()
-            formset.instance = self.object
-            formset.save()
-
-        return super().form_valid(form)
 
 
 class LoginView(BaseLoginView):

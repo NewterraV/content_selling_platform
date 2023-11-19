@@ -6,10 +6,12 @@ from product.models import Product, Pay
 
 
 class ProductBase(ABC):
+    """Базовый класс для работы с продуктами"""
     pass
 
 
 class PaymentBase(ABC):
+    """Базовый класс для работы с платежами"""
     pass
 
 
@@ -55,7 +57,7 @@ class UserProduct(ProductBase):
 
 
 class UserPayment(PaymentBase):
-
+    """Класс для работы с платежами"""
     def __init__(self, pk: str = None, user: Any = None):
         self.stripe = APIStripe()
         if pk:

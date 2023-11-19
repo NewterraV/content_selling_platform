@@ -6,13 +6,21 @@ from users.models import NULLABLE, User
 
 
 class Currency(models.TextChoices):
+    """Класс прессетов для валюты"""
+
+
     RUB = 'rub', '₽'
     USD = 'usd', '$'
     EUR = 'eur', '€'
 
 
 class Product(models.Model):
-    """Модель продукта"""
+    """
+    Модель продукта
+
+    Related:
+        - pay - to model Pay
+    """
 
     content = models.OneToOneField(
         Content,
@@ -58,6 +66,9 @@ class Product(models.Model):
         verbose_name='валюта'
     )
 
+    def __str__(self):
+        return f'product for {self.content if self.content else self.user}'
+
 
 class Pay(models.Model):
     """Модель платежа пользователя"""
@@ -99,3 +110,6 @@ class Pay(models.Model):
         default=False,
         verbose_name='статус'
     )
+
+    def __str__(self):
+        return f'{self.owner} payment for a {self.product}'

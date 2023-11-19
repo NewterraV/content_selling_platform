@@ -11,6 +11,7 @@ class ProductFormMixin:
     def save(self, commit=True):
         """Переопределение для обновления продукта в зависимости от
         исходного состояния"""
+
         if Product.objects.filter(pk=self.instance.pk).first():
             if self.instance.price:
                 self.instance.save()
@@ -28,6 +29,8 @@ class ProductFormMixin:
 
 
 class ProductForm(ProductFormMixin, forms.ModelForm):
+    """Форма модели Product"""
+
     price = forms.IntegerField(
         label="Цена пожизненной покупки доступа к контенту",
         widget=forms.TextInput(
@@ -41,28 +44,29 @@ class ProductForm(ProductFormMixin, forms.ModelForm):
         required=False,
     )
 
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     price = self.cleaned_data.get('price')
-    #     if price is None:
-    #         raise forms.ValidationError('поле цена не может быть пустым если '
-    #                                     'указана возможность покупки в '
-    #                                     'коллекцию.')
-    #     if price <= 0:
-    #         raise forms.ValidationError('Цена разовой покупки должна быть'
-    #                                     ' больше нуля')
-    #     return cleaned_data
-    #
-    # def clean_price(self):
-    #     """Метод валидации поля платной подписки"""
-    #     cleaned_data = self.cleaned_data.get('price')
-    #     if cleaned_data is None:
-    #         raise forms.ValidationError('поле цена не может быть пустым если '
-    #                                     'указана возможность покупки в '
-    #                                     'коллекцию.')
-    #     if cleaned_data <= 0:
-    #         raise forms.ValidationError('Цена должна быть больше 0')
-    #     return cleaned_data
+    def clean(self):
+        cleaned_data = super().clean()
+        price = self.cleaned_data.get('price')
+        if price is None:
+            raise forms.ValidationError('поле цена не может быть пустым если '
+                                        'указана возможность покупки в '
+                                        'коллекцию.')
+        if price <= 49:
+            raise forms.ValidationError('Цена разовой покупки должна быть'
+                                        ' цена должна быть не меньше цены '
+                                        'эквивалентной 0.5$')
+        return cleaned_data
+
+    def clean_price(self):
+        """Метод валидации поля платной подписки"""
+        cleaned_data = self.cleaned_data.get('price')
+        if cleaned_data is None:
+            raise forms.ValidationError('поле цена не может быть пустым если '
+                                        'указана возможность покупки в '
+                                        'коллекцию.')
+        if cleaned_data <= 0:
+            raise forms.ValidationError('Цена должна быть больше 0')
+        return cleaned_data
 
     class Meta:
         model = Product
@@ -70,6 +74,8 @@ class ProductForm(ProductFormMixin, forms.ModelForm):
 
 
 class UserProductForm(ProductFormMixin, forms.ModelForm):
+    """Форма модели Product c типом продукта 'user'"""
+
     price = forms.IntegerField(
         label="Цена подписки на пользователя",
         widget=forms.TextInput(

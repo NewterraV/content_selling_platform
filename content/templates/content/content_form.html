@@ -17,6 +17,7 @@
                         {{ form | crispy }}
                     {% endfor %}
                     {{ product_formset.management_form }}
+
                     {% for form in product_formset.forms %}
                         {{ form | crispy }}
                     {% endfor %}
