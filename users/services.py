@@ -16,3 +16,13 @@ def user_directory_path_content(instance, filename=None):
 
 def user_directory_path(instance, filename):
     return f'user_{instance.pk}/{filename}'
+
+
+def get_client_ip(request):
+    """Метод возвращает ip клиента"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

@@ -44,28 +44,32 @@ class ProductForm(ProductFormMixin, forms.ModelForm):
         required=False,
     )
 
-    def clean(self):
-        cleaned_data = super().clean()
-        price = self.cleaned_data.get('price')
-        if price is None:
-            raise forms.ValidationError('поле цена не может быть пустым если '
-                                        'указана возможность покупки в '
-                                        'коллекцию.')
-        if price <= 49:
-            raise forms.ValidationError('Цена разовой покупки должна быть'
-                                        ' цена должна быть не меньше цены '
-                                        'эквивалентной 0.5$')
-        return cleaned_data
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     price = self.cleaned_data.get('price')
+    #     if price is None:
+    #         raise forms.ValidationError('поле цена не может быть пустым если '
+    #                                     'указана возможность покупки в '
+    #                                     'коллекцию.')
+    #     if price <= 49:
+    #         raise forms.ValidationError('Цена разовой покупки должна быть'
+    #                                     ' цена должна быть не меньше цены '
+    #                                     'эквивалентной 0.5$')
+    #     return cleaned_data
 
     def clean_price(self):
         """Метод валидации поля платной подписки"""
         cleaned_data = self.cleaned_data.get('price')
+        if cleaned_data == 49:
+            return cleaned_data
         if cleaned_data is None:
             raise forms.ValidationError('поле цена не может быть пустым если '
                                         'указана возможность покупки в '
                                         'коллекцию.')
-        if cleaned_data <= 0:
-            raise forms.ValidationError('Цена должна быть больше 0')
+        if cleaned_data <= 50:
+            raise forms.ValidationError('Цена разовой покупки должна быть'
+                                        ' цена должна быть не меньше цены '
+                                        'эквивалентной 0.5$')
         return cleaned_data
 
     class Meta:

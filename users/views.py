@@ -1,17 +1,20 @@
 from django.contrib.auth.views import LoginView as BaseLoginView, \
     LogoutView as BaselogoutView
-from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, TemplateView
 from django.forms import inlineformset_factory
 from django.db.models import Sum
+from django.shortcuts import redirect
+from django.urls import reverse_lazy, reverse
 
 from content.models import Content
 from product.forms import UserProductForm
 from product.models import Product
 from subscription.models import Subscription
 from subscription.src.subscription import WorkSubscription
-from users.forms import RegisterForm, LoginForm, UserUpdateForm
-from users.models import User
+from users.forms import RegisterForm, LoginForm, UserUpdateForm, VerifyForm
+from users.models import User, Verify
+from users.services import get_client_ip
+from users.src.smsru_api import APISMSru
 
 
 class UserFormsetMixin:
@@ -99,6 +102,31 @@ class UserRegisterView(UserFormsetMixin, CreateView):
 
     success_url = reverse_lazy('content:content_list')
 
+    def form_valid(self, form):
+        """Переопределнние для валидации и сохранения формсета"""
+
+        formset = self.get_context_data()['formset']
+
+        if not formset.is_valid():
+            return self.form_invalid(form)
+        self.object = form.save(commit=False)
+        ip = get_client_ip(self.request)
+        verify_code = APISMSru().get_verify_code(
+            phone=f'7{self.object.phone}',
+            ip_address=ip
+        )
+        if not verify_code:
+            return redirect(reverse(
+                'content:index'))
+        self.object = form.save()
+        formset.instance = self.object
+        formset.save()
+        verify = Verify.objects.create(
+            user=self.object, verify_code=verify_code)
+        verify.save()
+        return redirect(reverse(
+            'users:verify', args=[verify.pk]))
+
 
 class UserUpdateView(UserFormsetMixin, UpdateView):
     """Представление для редактирования профиля пользователя"""
@@ -121,3 +149,41 @@ class LoginView(BaseLoginView):
 class LogoutView(BaselogoutView):
     """Класс для представления выхода пользователя"""
     pass
+
+
+class VerifyView(UpdateView):
+    """Представление проверки кода верификации"""
+    model = Verify
+    success_url = 'users:login'
+    form_class = VerifyForm
+
+    def form_valid(self, form):
+        """Переопределение делает пользователя которому принадлежит код
+        верификации активным"""
+
+        self.object = form.save()
+        user = self.object.user
+        user.is_active = True
+        user.save()
+        self.object.delete()
+        return redirect(reverse(self.success_url))
+
+
+class GetVerify(TemplateView):
+    """Представление для повторного запроса кода верификации"""
+    model = Verify
+    success_url = 'users:verify'
+
+    def get(self, request, *args, **kwargs):
+
+        verify = Verify.objects.get(pk=self.kwargs.get('pk'))
+        user = verify.user
+        ip = get_client_ip(self.request)
+        verify_code = APISMSru().get_verify_code(
+            phone=f'7{user.phone}',
+            ip_address=ip
+        )
+        verify.verify_code = verify_code
+        verify.save()
+        return redirect(reverse(
+            'users:verify', args=[verify.pk]))

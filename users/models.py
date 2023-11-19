@@ -99,7 +99,6 @@ class Verify(models.Model):
         verbose_name='user code',
         **NULLABLE)
     verify_code = models.PositiveIntegerField(
-        default=randint(00000, 99999),
         verbose_name='verify code')
     user = models.OneToOneField(
         User,

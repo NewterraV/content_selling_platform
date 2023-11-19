@@ -198,3 +198,6 @@ API_YOUTUBE_TOKEN = os.getenv('API_YOUTUBE_TOKEN')
 # Stripe API settings
 # https://stripe.com/docs/api
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+
+
+SMSRU_API_KEY = os.getenv('SMSRU_API_KEY')
