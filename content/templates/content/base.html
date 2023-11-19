@@ -1,0 +1,151 @@
+<!doctype html>
+{% load static %}
+{% load templatetags %}
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>{{ title }}</title>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-grid.css' %}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    {#    <link href="{% static 'css/headers.css' %}" rel="stylesheet">#}
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+</head>
+<body>
+
+<main>
+    <h1 class="visually-hidden">Headers examples</h1>
+
+    <div class="container " container="body">
+        <header class="d-flex flex-wrap justify-content-center justify-content-md-between py-2 mb-4 border-bottom">
+            <a href="/"
+               class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-primary text-decoration-none">
+                <span class="fs-4">NewTerra</span>
+            </a>
+            <ul class="d-flex nav col-12 col-md-auto mb-3 justify-content-center mb-md-0">
+                <li><a href="#" class="btn btn-success btn-sm rounded rounded-5">Оформить
+                    подписку на сервис</a>
+                </li>
+                <li><a href="#"
+                       class="nav-link px-2 link-primary ">Контент</a>
+                </li>
+                <li><a href="#" class="nav-link px-2 link-primary">Pricing</a>
+                </li>
+                <li><a href="#" class="nav-link px-2 link-primary">FAQs</a>
+                </li>
+                <li><a href="#" class="nav-link px-2 link-primary">About</a>
+                </li>
+            </ul>
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                <input type="search" class="form-control"
+                       placeholder="Искать..." aria-label="Search">
+            </form>
+
+            <div class="dropdown text-end">
+                <a href="#"
+                   class="d-block link-dark text-decoration-none dropdown-toggle"
+                   id="dropdownUser1" data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    {% if user.is_authenticated %}
+                        <img src="{% mediapath user.avatar %}" alt="mdo"
+                             width="32" height="32" class="rounded-circle">
+                    {% else %}
+                        <img src="{% mediapath user.avatar %}" alt="mdo"
+                             width="32" height="32" class="rounded-circle">
+                    {% endif %}
+                </a>
+                {% if user.is_authenticated %}
+                    <ul class="dropdown-menu text-small"
+                        aria-labelledby="dropdownUser1">
+                        <h5
+                                class="mb-3 text-secondary text-center">{{ user.username }}
+                        </h5>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'content:content_create' %}">Добавить
+                            видео</a></li>
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'content:content_list' %}">Панель
+                            управления</a>
+                        </li>
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'users:user_update' %}">
+                            Редактировать профиль</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'users:logout' %}">Выход</a>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="dropdown-menu text-small"
+                        aria-labelledby="dropdownUser1">
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'users:login' %}">Вход</a>
+                        </li>
+                        <li><a class="dropdown-item text-primary"
+                               href="{% url 'users:user_create' %}">Регистрация</a>
+                        </li>
+                    </ul>
+                {% endif %}
+
+            </div>
+
+        </header>
+    </div>
+
+    <div class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div class="container">
+        <footer class="py-3 my-1">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            </ul>
+            <p class="text-center text-body-secondary">&copy; 2023 Newterra,
+                Inc</p>
+        </footer>
+    </div>
+
+
+</main>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script></script>
+<script src="{% static 'js/main.js' %}"></script>
+{#<script src="{% static 'js/feather.min.js' %}"#}
+{#        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"#}
+{#        crossorigin="anonymous"></script>#}
+{#<script src="{% static 'js/Chart.min.js' %}"#}
+{#        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"#}
+{#        crossorigin="anonymous"></script>#}
+
+</body>
+</html>
