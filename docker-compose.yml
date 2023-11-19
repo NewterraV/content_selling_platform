@@ -1,0 +1,52 @@
+version: '3'
+services:
+
+  redis:
+    image: redis:latest
+
+
+  db:
+    image: postgres:latest
+    environment:
+      PGNAME: ${DATABASES_NAME}
+      PGUSER: ${DATABASES_USER}
+      POSTGRES_PASSWORD: ${DATABASES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pg_data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - '8000:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  celery:
+    build: .
+    tty: true
+    command: celery -A config worker --loglevel INFO
+    depends_on:
+      - redis
+      - app
+
+#  celery-beat:
+#    build: .
+#    tty: true
+#    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    depends_on:
+#      - redis
+#      - app
+#      - celery
+
+volumes:
+  pg_data:
