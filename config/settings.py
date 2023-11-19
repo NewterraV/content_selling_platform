@@ -199,5 +199,6 @@ API_YOUTUBE_TOKEN = os.getenv('API_YOUTUBE_TOKEN')
 # https://stripe.com/docs/api
 STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 
-
+# API SMSru
+# https://sms.ru/api
 SMSRU_API_KEY = os.getenv('SMSRU_API_KEY')
