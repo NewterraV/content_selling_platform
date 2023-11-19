@@ -5,9 +5,12 @@
 
 {% block content %}
     <form method="post" enctype="multipart/form-data">
-        <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg"
-             alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Пожалуйста, войдите</h1>
+        <div class="position-relative">
+            <img class="img" src="{% mediapath 'default/Logo.png' %}"
+                 alt="" width="72" height="72">
+            <a href="{% url 'content:index' %}" class="stretched-link"></a>
+        </div>
+        <h1 class="h3 mb-3 fw-normal pt-3">Пожалуйста, войдите</h1>
         {% csrf_token %}
         {{ form|crispy }}
 

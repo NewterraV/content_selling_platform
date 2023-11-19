@@ -43,22 +43,24 @@
         <header class="d-flex flex-wrap justify-content-center justify-content-md-between py-2 mb-4 border-bottom">
             <a href="/"
                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-primary text-decoration-none">
+                <img src="{% mediapath 'default/Logo.png' %}" alt="{% mediapath 'default/Logo.png' %}"
+                             width="20" height="20" class="rounded-circle">
                 <span class="fs-4">NewTerra</span>
             </a>
-            <ul class="d-flex nav col-12 col-md-auto mb-3 justify-content-center mb-md-0">
-                <li><a href="#" class="btn btn-success btn-sm rounded rounded-5">Оформить
-                    подписку на сервис</a>
-                </li>
-                <li><a href="#"
-                       class="nav-link px-2 link-primary ">Контент</a>
-                </li>
-                <li><a href="#" class="nav-link px-2 link-primary">Pricing</a>
-                </li>
-                <li><a href="#" class="nav-link px-2 link-primary">FAQs</a>
-                </li>
-                <li><a href="#" class="nav-link px-2 link-primary">About</a>
-                </li>
-            </ul>
+{#            <ul class="d-flex nav col-12 col-md-auto mb-3 justify-content-center mb-md-0">#}
+{#                <li><a href="#" class="btn btn-success btn-sm rounded rounded-5">Оформить#}
+{#                    подписку на сервис</a>#}
+{#                </li>#}
+{#                <li><a href="#"#}
+{#                       class="nav-link px-2 link-primary ">Контент</a>#}
+{#                </li>#}
+{#                <li><a href="#" class="nav-link px-2 link-primary">Pricing</a>#}
+{#                </li>#}
+{#                <li><a href="#" class="nav-link px-2 link-primary">FAQs</a>#}
+{#                </li>#}
+{#                <li><a href="#" class="nav-link px-2 link-primary">About</a>#}
+{#                </li>#}
+{#            </ul>#}
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
                 <input type="search" class="form-control"
                        placeholder="Искать..." aria-label="Search">
@@ -70,10 +72,10 @@
                    id="dropdownUser1" data-bs-toggle="dropdown"
                    aria-expanded="false">
                     {% if user.is_authenticated %}
-                        <img src="{% mediapath user.avatar %}" alt="mdo"
+                        <img src="{% mediapath user.avatar %}" alt="{% mediapath 'default/NoneUser.png' %}"
                              width="32" height="32" class="rounded-circle">
                     {% else %}
-                        <img src="{% mediapath user.avatar %}" alt="mdo"
+                        <img src="{% mediapath 'default/NoneUser.png' %}" alt="{% mediapath 'default/NoneUser.png' %}"
                              width="32" height="32" class="rounded-circle">
                     {% endif %}
                 </a>

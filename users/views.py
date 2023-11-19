@@ -115,6 +115,7 @@ class UserRegisterView(UserFormsetMixin, CreateView):
             phone=f'7{self.object.phone}',
             ip_address=ip
         )
+        print(verify_code)
         if not verify_code:
             return redirect(reverse(
                 'content:index'))

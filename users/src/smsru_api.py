@@ -18,7 +18,7 @@ class APISMSru(SMSruBase):
     def get_verify_code(self, phone, ip_address: str) -> [int, bool]:
 
         if settings.ENV_TYPE in ['local', 'test']:
-            return 0000
+            return 1111
 
         response = requests.get(f'https://sms.ru/code/call?'
                                 f'phone={phone}&ip={ip_address}&api_id'
