@@ -16,20 +16,21 @@
                     {% elif user.pk == author.pk %}
                         <span class="badge rounded-pill bg-primary">ЭТО ВАШ ПРОФИЛЬ</span>
                     {% else %}
-                        <form action="{% url 'subscription:subscribe' author.pk %}"
-                              method="GET" id="ajax_subscribe">
-                        {% csrf_token %}
-                        {% if subs.subs %}
-                            <input class="btn btn-sm btn-primary rounded rounded-4"
-                                   type="submit" id="subs"
-                                   value="Отписаться"
-                            >
-                        {% else %}
-                            <input class="btn btn-sm btn-primary rounded rounded-4"
-                                   type="submit" value="Подписаться бесплатно"
-                                   id="subs">
-                        {% endif %}
                         {% if user.is_authenticated %}
+                            <form action="{% url 'subscription:subscribe' author.pk %}"
+                                  method="GET" id="ajax_subscribe">
+                            {% csrf_token %}
+                            {% if subs.subs %}
+                                <input class="btn btn-sm btn-primary rounded rounded-4"
+                                       type="submit" id="subs"
+                                       value="Отписаться"
+                                >
+                            {% else %}
+                                <input class="btn btn-sm btn-primary rounded rounded-4"
+                                       type="submit"
+                                       value="Подписаться бесплатно"
+                                       id="subs">
+                            {% endif %}
                             {% if sub.paid_subs_price %}
                                 <a class="btn btn-sm btn-danger rounded rounded-4"
                                    href="{% url 'product:product_payment' sub.paid_subs_pk %}">Подписаться
@@ -42,7 +43,8 @@
                 </div>
             </div>
             <div class="col-md-auto">
-                <img src="{% mediapath author.avatar %}" alt="{% mediapath 'default/NoneUser.png' %}"
+                <img src="{% mediapath author.avatar %}"
+                     alt="{% mediapath 'default/NoneUser.png' %}"
                      width="50"
                      height="50" class="rounded-circle text-end">
             </div>
