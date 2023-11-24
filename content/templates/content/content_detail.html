@@ -111,11 +111,7 @@
                                      alt="...">
                             </div>
                             <div class=" flex-column card-img-overlay">
-                                {% if content.is_free %}
-                                    <span class="badge rounded-pill bg-primary">Free</span>
-                                {% else %}
-                                    <span class="badge rounded-pill bg-success">Paid</span>
-                                {% endif %}
+                                {% include 'content/includes/inc_badge.html' %}
                             </div>
                             <div class="col-md-7">
                                 <p class="card-title fw-bold ">{{ content.title|truncatechars:40 }}</p>

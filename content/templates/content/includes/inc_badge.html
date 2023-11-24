@@ -1,11 +1,13 @@
 {% if content.is_free %}
     <span class="badge rounded-pill bg-primary">Free</span>
 {% else %}
-    <span class="badge rounded-pill bg-warning">One-time</span>
-{% endif %}
-{% if content.is_paid_subs %}
-    <span class="badge rounded-pill bg-danger">Author</span>
-{% endif %}
-{% if content.is_src_subs %}
-    <span class="badge rounded-pill bg-success">Look</span>
+    {% if content.is_purchase %}
+        <span class="badge rounded-pill bg-warning">One-time</span>
+    {% endif %}
+    {% if content.is_paid_subs %}
+        <span class="badge rounded-pill bg-danger">Author</span>
+    {% endif %}
+    {% if content.is_src_subs %}
+        <span class="badge rounded-pill bg-success">Look</span>
+    {% endif %}
 {% endif %}

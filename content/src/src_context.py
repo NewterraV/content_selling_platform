@@ -47,8 +47,9 @@ def get_index_context(context_data: dict, user: Any, ):
     # Получаем список контента который пользователь приобрел по
     # разовой покупке
     purchased = list(
-        Content.objects.filter(purchases__owner=user,
-                               is_publish=True))
+        Content.objects.order_by(
+            '?').filter(purchases__owner=user,
+                        is_publish=True))[:4]
 
     # Собираем контент на основе полученных данных
     # с применением методов рандомизации
@@ -57,12 +58,11 @@ def get_index_context(context_data: dict, user: Any, ):
             context_data['object_list']) + subs_content[:12])
         free_list = list(free_set)
         shuffle(free_list)
-        context_data['object_list'] = free_list
+        context_data['object_list'] = free_list[:12]
     if subs_paid_content:
         context_data['subs_paid_content'] = subs_paid_content[:8]
     if purchased:
-        context_data['purchased'] = sample(purchased, 4) if len(
-            purchased) > 4 else purchased
+        context_data['purchased'] = purchased
 
     return context_data
 
@@ -125,13 +125,11 @@ def get_content_detail_context(context_data: dict, user: Any,
                 context_data['video'] = content.video.video_id
 
     context_data['title'] = content.title
-    # Сборка списка видео
-    play_list = list(Content.objects.filter(is_publish=True).exclude(
-        pk=content.pk))
 
     # Отображение 10 рандомных записей в предложенных
-    context_data['play_list'] = sample(play_list, 10) if len(
-        play_list) > 10 else play_list
+    context_data['play_list'] = Content.objects.order_by('?').filter(
+        is_publish=True).exclude(
+        pk=content.pk)[:10]
 
     return context_data
 

@@ -265,7 +265,7 @@ class VideoForm(StyleMixin, forms.ModelForm):
         """Метод валидации поля платной подписки"""
         cleaned_data = self.cleaned_data.get('url')
         if cleaned_data:
-            if not bool(re.match(r'https://www.youtube', cleaned_data)):
+            if 'youtu' not in cleaned_data:
                 raise forms.ValidationError(
                     'Допускается использование видео только'
                     ' с хостинга "YouTube"')

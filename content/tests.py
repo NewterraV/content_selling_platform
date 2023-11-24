@@ -146,14 +146,14 @@ class TestContent(TestMixin, TestCase):
         # Так как авторизованный пользователь подписан на author_2, а общее
         # количество видео на платформе 12, то он получит все бесплатные видео
         # автора-1 и все видео кроме видео по платной подписке автора-2,
-        # то-есть 6
-        self.assertEquals(len(response.context_data['object_list']), 6)
+        # то-есть 9
+        self.assertEquals(len(response.context_data['object_list']), 9)
 
         # Добавим платную подписку на автора-2
         WorkPaidSubscription(user).set_subs(author_2.pk)
         response = self.client.get('/')
         # Общий контекст не поменяется
-        self.assertEquals(len(response.context_data['object_list']), 6)
+        self.assertEquals(len(response.context_data['object_list']), 9)
         # А в контексте с платными подписками появится 4 видео, это все
         # опубликованные видео автора-2
         self.assertEquals(len(response.context_data['subs_paid_content']),
@@ -167,7 +167,7 @@ class TestContent(TestMixin, TestCase):
         purchase.save()
         response = self.client.get('/')
         # Предыдущий контекст не поменяется
-        self.assertEquals(len(response.context_data['object_list']), 6)
+        self.assertEquals(len(response.context_data['object_list']), 9)
         self.assertEquals(len(response.context_data['subs_paid_content']),
                           4)
         # А в списке купленных автором видео появится 1 видео автора 1
@@ -217,7 +217,7 @@ class TestContent(TestMixin, TestCase):
             },
             'video': 'F3qHa2jaD10',
             'title': 'test',
-            'play_list': []
+            'play_list': ANY
         })
 
     def test_create_view(self):

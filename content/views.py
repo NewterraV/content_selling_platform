@@ -32,11 +32,11 @@ class IndexView(ListView):
         """Переопределение для сбора ограниченного количества видео"""
         if self.request.user.is_authenticated:
             queryset = super().get_queryset().exclude(
-                owner=self.request.user).filter(
-                is_publish=True, is_free=True)[:12]
+                owner=self.request.user).order_by('?').filter(
+                is_publish=True)[:12]
         else:
-            queryset = super().get_queryset().filter(
-                is_publish=True, is_free=True)[:12]
+            queryset = super().get_queryset().order_by('?').filter(
+                is_publish=True)[:12]
 
         return queryset
 
@@ -92,7 +92,8 @@ class ContentListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         """Переопределение для выборки из контента
          принадлежащего пользователю"""
-        queryset = super().get_queryset().filter(owner=self.request.user)
+        queryset = super().get_queryset().filter(
+            owner=self.request.user).order_by('-date_update')
         return queryset
 
 

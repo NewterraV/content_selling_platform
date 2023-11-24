@@ -8,7 +8,6 @@ from users.models import NULLABLE, User
 class Currency(models.TextChoices):
     """Класс прессетов для валюты"""
 
-
     RUB = 'rub', '₽'
     USD = 'usd', '$'
     EUR = 'eur', '€'

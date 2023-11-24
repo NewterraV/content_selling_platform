@@ -3,8 +3,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from product.models import Product, Pay
-from product.src.Payment import UserProduct, UserPayment
+from product.src.Payment import UserPayment
 from subscription.models import PermanentPurchase, Subscription
 from subscription.src.subscription import WorkPaidSubscription, \
     WorkSubscription

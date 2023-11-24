@@ -10,7 +10,7 @@
                         <div class="col-4 ratio ratio-16x9">
                             <img src="{% mediapath content.image %}"
                                  class="img-fluid rounded"
-                                 alt="...">
+                                 alt="{% mediapath 'default/download.png' %}">
                             <a href="{% url 'content:content_detail' content.pk %}"
                                class="stretched-link"></a>
                             <div class=" flex-column card-img-overlay">

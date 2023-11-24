@@ -4,7 +4,7 @@
         <div class="ratio ratio-16x9">
             {% if content.image %}
                 <img src="{{ content.image | mediapath }}"
-                     class="rounded">
+                     class="rounded" alt="{% mediapath 'default/download.png' %}">
             {% else %}
                 <div class="d-flex">
                     <div class="spinner-border text-primary"
@@ -22,7 +22,7 @@
         <div class="row justify-content-start">
             <div class="col-2 pt-2 position-relative">
                 <img src="{% mediapath content.owner.avatar %}"
-                     alt="..."
+                     alt="{% mediapath 'default/Logo.png' %}"
                      width="32"
                      height="32" class="rounded-circle">
                 <a href="{% url 'users:user_detail' content.owner.pk %}"

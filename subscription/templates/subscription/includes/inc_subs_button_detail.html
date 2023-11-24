@@ -39,10 +39,12 @@
                     Стать участником LOOK
                 </a>
             {% endif %}
-            <a href="{% url 'product:product_payment' object.product.pk %}"
-               class=" btn btn-secondary btn-sm rounded rounded-4">
-                Приобрести видео в коллекцию
-            </a>
+            {% if object.is_purchase %}
+                <a href="{% url 'product:product_payment' object.product.pk %}"
+                   class=" btn btn-secondary btn-sm rounded rounded-4">
+                    Приобрести видео в коллекцию
+                </a>
+            {% endif %}
         {% else %}
             <a href="{% url 'users:login' %}"
                class=" btn btn-primary rounded rounded-4">
