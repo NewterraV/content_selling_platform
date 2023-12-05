@@ -1,0 +1,33 @@
+{% extends 'content/base.html' %}
+{% load templatetags %}
+{% block content %}
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-4 g-3">
+            {% for content in object_list %}
+                {% include 'content/includes/inc_video_block.html' %}
+            {% endfor %}
+        </div>
+        {% if user.is_authenticated %}
+            {% if subs_paid_content %}
+                <p class="fs-3 fw-bold">Новое в приобретенных подписках</p>
+                <ul class="nav justify-content-center border-bottom mb-3">
+                </ul>
+                <div class="row row-cols-1 row-cols-md-4 g-3">
+                    {% for content in subs_paid_content %}
+                        {% include 'content/includes/inc_video_block.html' %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if purchased %}
+                <p class="fs-3 fw-bold">Приобретенный контент</p>
+                <ul class="nav justify-content-center border-bottom mb-3">
+                </ul>
+                <div class="row row-cols-1 row-cols-md-4 g-3">
+                    {% for content in purchased %}
+                        {% include 'content/includes/inc_video_block.html' %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

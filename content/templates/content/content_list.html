@@ -1,0 +1,63 @@
+{% extends 'content/base.html' %}
+{% load templatetags %}
+
+{% block content %}
+    <div class="container gx-5">
+        <div class="row row-cols-1 row-cols-md-2 gx-5 gy-2">
+            {% for content in object_list %}
+                <div class="mb-1" href="">
+                    <div class="row bg-body">
+                        <div class="col-4 ratio ratio-16x9">
+                            <img src="{% mediapath content.image %}"
+                                 class="img-fluid rounded"
+                                 alt="{% mediapath 'default/download.png' %}">
+                            <a href="{% url 'content:content_detail' content.pk %}"
+                               class="stretched-link"></a>
+                            <div class=" flex-column card-img-overlay">
+                                {% include 'content/includes/inc_badge.html' %}
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <p class="card-title fw-bold ">{{ content.title|truncatechars:40 }}</p>
+                            <small class="fw-light">{{ content.owner.username }}</small>
+                            <p><small
+                                    class="fw-light">{{ content.view_count }}
+                                просмотров</small></p>
+                        </div>
+                        <div class="col-3 d-grid gap-1">
+                            <a href="{% url 'content:content_update' content.pk %}"
+                               class="btn btn-outline-primary btn-sm rounded rounded-5">
+                                Редактировать
+                            </a>
+                            <a class="btn btn-outline-primary btn-sm rounded rounded-5"
+                               href="{% url 'content:content_delete' content.pk %}">
+                                Скрыть
+                            </a>
+                            <a class="btn btn-outline-secondary btn-sm rounded rounded-5"
+                               href="{% url 'content:content_delete' content.pk %}">
+                                Удалить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center pt-3">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

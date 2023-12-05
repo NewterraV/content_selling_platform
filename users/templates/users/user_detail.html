@@ -1,0 +1,61 @@
+{% extends 'content/base.html' %}
+{% load templatetags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-11">
+                <h4 class="card-title text-end text-primary">{{ author.username | upper }}</h4>
+                <div class="text-md-end">
+                    <span class="badge badge-end rounded-pill bg-success">ПОДПИСАНО {{ sub.subs_count }}</span>
+                    <span class="badge badge-end rounded-pill bg-primary">ПРОСМОТРОВ {{ sub.view_count }}</span>
+                    <span class="badge badge-end rounded-pill bg-info">ОПУБЛИКОВАНО ВИДЕО {{ sub.video_count }}</span>
+                </div>
+                <div class="text-end pt-2">
+                    {% if subs.paid_subs %}
+                        <span class="badge rounded-pill bg-primary">Платная подписка истечет</span>
+                    {% elif user.pk == author.pk %}
+                        <span class="badge rounded-pill bg-primary">ЭТО ВАШ ПРОФИЛЬ</span>
+                    {% else %}
+                        {% if user.is_authenticated %}
+                            <form action="{% url 'subscription:subscribe' author.pk %}"
+                                  method="GET" id="ajax_subscribe">
+                            {% csrf_token %}
+                            {% if subs.subs %}
+                                <input class="btn btn-sm btn-primary rounded rounded-4"
+                                       type="submit" id="subs"
+                                       value="Отписаться"
+                                >
+                            {% else %}
+                                <input class="btn btn-sm btn-primary rounded rounded-4"
+                                       type="submit"
+                                       value="Подписаться бесплатно"
+                                       id="subs">
+                            {% endif %}
+                            {% if sub.paid_subs_price %}
+                                <a class="btn btn-sm btn-danger rounded rounded-4"
+                                   href="{% url 'product:product_payment' sub.paid_subs_pk %}">Подписаться
+                                    за
+                                    {{ sub.paid_subs_price }}{{ sub.paid_subs_currency }}</a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <img src="{% mediapath author.avatar %}"
+                     alt="{% mediapath 'default/NoneUser.png' %}"
+                     width="50"
+                     height="50" class="rounded-circle text-end">
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="container pt-3">
+        <div class="row row-cols-1 row-cols-md-4 g-3">
+            {% for content in content_list %}
+                {% include 'content/includes/inc_video_block.html' %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

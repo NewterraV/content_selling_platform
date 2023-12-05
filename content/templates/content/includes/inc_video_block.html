@@ -1,0 +1,42 @@
+{% load templatetags %}
+<div class="col">
+    <div class="card h-100 g-2 bg-body border-white">
+        <div class="ratio ratio-16x9">
+            {% if content.image %}
+                <img src="{{ content.image | mediapath }}"
+                     class="rounded" alt="{% mediapath 'default/download.png' %}">
+            {% else %}
+                <div class="d-flex">
+                    <div class="spinner-border text-primary"
+                         role="status">
+                        <span class="visually-hidden">Изображение потерялось, ищем...</span>
+                    </div>
+                </div>
+            {% endif %}
+        <a href="{% url 'content:content_detail' content.pk %}"
+                   class="stretched-link"></a>
+        </div>
+        <div class=" flex-column card-img-overlay">
+            {% include 'content/includes/inc_badge.html' %}
+        </div>
+        <div class="row justify-content-start">
+            <div class="col-2 pt-2 position-relative">
+                <img src="{% mediapath content.owner.avatar %}"
+                     alt="{% mediapath 'default/Logo.png' %}"
+                     width="32"
+                     height="32" class="rounded-circle">
+                <a href="{% url 'users:user_detail' content.owner.pk %}"
+                   class="stretched-link"></a>
+            </div>
+            <div class="col-10 position-relative">
+                <p class="card-title fw-bold pt-1">{{ content.title|truncatechars:42 }}</p>
+                <small class="fw-light">{{ content.owner.username }}</small>
+                <p><small
+                        class="fw-light">{{ content.view_count }}
+                    просмотров</small></p>
+                <a href="{% url 'content:content_detail' content.pk %}"
+                   class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</div>

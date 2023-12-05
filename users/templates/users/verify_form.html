@@ -1,0 +1,24 @@
+{% extends 'users/base.html' %}
+{% load templatetags %}
+{% load crispy_forms_tags %}
+{% crispy login login.helper %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="position-relative">
+            <img class="img" src="{% mediapath 'default/Logo.png' %}"
+                 alt="" width="72" height="72">
+            <a href="{% url 'content:index' %}" class="stretched-link"></a>
+        </div>
+        <h1 class="h3 mb-3 fw-normal">Подтвердите номер телефона</h1>
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Подтвердить
+        </button>
+    </form>
+    <a class="link p-3"
+       href="{% url 'users:get_verify' object.pk %}">Запросить код
+        повторно</a>
+    <p class="mt-5 mb-3 text-muted">&copy; Newterra.inc 2023</p>
+{% endblock %}

@@ -1,0 +1,19 @@
+<form action="{% url 'subscription:subscribe' object.owner.pk %}"
+      method="GET" id="ajax_subscribe">
+    {% csrf_token %}
+    {% if subs.paid_subs %}
+        <span class="badge rounded-pill bg-primary">Платная подписка истечет
+        </span>
+    {% elif user.pk == object.owner.pk %}
+        <span class="badge rounded-pill bg-primary">Вы владелец</span>
+    {% else %}
+        {% include 'subscription/includes/inc_subs_button.html' %}
+        {% if sub.paid_subs_price %}
+            <a class="btn btn-sm btn-danger rounded rounded-4"
+               href="{% url 'product:product_payment' sub.paid_subs_pk %}">Подписаться
+                за
+                {{ sub.paid_subs_price }}{{ sub.paid_subs_currency }}</a>
+        {% endif %}
+    {% endif %}
+
+</form>

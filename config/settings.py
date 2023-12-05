@@ -43,6 +43,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'crispy_forms',
+    "crispy_bootstrap5",
+
+    'users',
+    'content',
+    'subscription',
+    'product'
+
 ]
 
 MIDDLEWARE = [
@@ -88,6 +97,12 @@ DATABASES = {
     }
 }
 
+# Переопределение модели аутентификации
+AUTH_USER_MODEL = 'users.User'
+
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -109,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -128,6 +143,12 @@ if ENV_TYPE == 'local':
     )
 else:
     STATIC_ROOT = BASE_DIR / 'static'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -154,3 +175,30 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
+
+# Settings Celery
+CELERY_BROKER_URL = os.getenv('CACHES_LOCATION')
+CELERY_RESULT_BACKEND = os.getenv('CACHES_LOCATION')
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE')
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_BEAT_SCHEDULE = {
+
+}
+
+# Settings crispy-forms for bootstrap
+# https://django-crispy-forms.readthedocs.io/en/latest/
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# API TouTube settings
+API_YOUTUBE_TOKEN = os.getenv('API_YOUTUBE_TOKEN')
+
+# Stripe API settings
+# https://stripe.com/docs/api
+STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+
+# API SMSru
+# https://sms.ru/api
+SMSRU_API_KEY = os.getenv('SMSRU_API_KEY')
